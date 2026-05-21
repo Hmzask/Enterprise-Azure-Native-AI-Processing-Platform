@@ -11,7 +11,7 @@ def create_worker_app():
     app = Flask(__name__)
 
     app.config["SQLALCHEMY_DATABASE_URI"] = (
-        "sqlite:///../api-service/enterprise_ai.db"
+        "sqlite:////home/a/Programming/ENTERPRISE-AI-PLATFORM/api_service/instance/enterprise_ai.db"
     )
 
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
