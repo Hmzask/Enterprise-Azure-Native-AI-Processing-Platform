@@ -14,13 +14,22 @@ class Config:
         "DATABASE_URL"
     )
 
+
+    # Azure DB
+    AZURE_SQL_CONNECTION_STRING = os.getenv(
+        "AZURE_SQL_CONNECTION_STRING"
+    )
+
+
+    # Azure Blob storage
     AZURE_STORAGE_CONNECTION_STRING = os.getenv(
         "AZURE_STORAGE_CONNECTION_STRING"
     )
 
-    AZURE_SQL_CONNECTION_STRING = os.getenv(
-        "AZURE_SQL_CONNECTION_STRING"
+    AZURE_STORAGE_CONTAINER = os.getenv(
+        "AZURE_STORAGE_CONTAINER"
     )
+
 
 
 class DevelopmentConfig(Config):

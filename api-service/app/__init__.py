@@ -15,7 +15,7 @@ def create_app():
     migrate.init_app(app, db)
 
 
-    # REGISTER BLUPRINTS
+
     # Health Blueprint
     from app.routes.health_routes import health_bp
     app.register_blueprint(health_bp)
@@ -23,5 +23,9 @@ def create_app():
     # Job Blueprint
     from app.routes.job_routes import job_bp
     app.register_blueprint(job_bp)
+
+    # Upload Blueprint
+    from app.routes.upload_routes import upload_bp
+    app.register_blueprint(upload_bp)
 
     return app

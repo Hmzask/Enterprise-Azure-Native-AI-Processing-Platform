@@ -14,7 +14,7 @@ job_bp = Blueprint(
 def create_job():
 
     job = Job(
-        file_name="sample.pdf",
+        file_name="sample1.pdf",
         file_type="pdf",
         uploaded_by="hamza@company.com"
     )
