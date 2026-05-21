@@ -6,6 +6,7 @@ from app.extensions import db
 from app.models.job_model import Job
 
 from app.azure.blob_client import AzureBlobService
+from app.azure.servicebus_client import AzureServiceBusService
 
 
 upload_bp = Blueprint(
@@ -51,6 +52,17 @@ def upload_file():
 
     db.session.add(job)
     db.session.commit()
+
+    # Send message to queue
+    service_bus = AzureServiceBusService()
+    service_bus.send_message({
+        "job_id": job.id,
+        "blob_url": blob_url,
+        "file_name": file.filename,
+        "file_type": file.content_type,
+        "uploaded_by": job.uploaded_by,
+        "status": job.status
+    })
 
     return {
         "message": "File uploaded successfully",

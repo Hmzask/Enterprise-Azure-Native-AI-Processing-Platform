@@ -9,7 +9,6 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY")
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
     SQLALCHEMY_DATABASE_URI = os.getenv(
         "DATABASE_URL"
     )
@@ -28,6 +27,15 @@ class Config:
 
     AZURE_STORAGE_CONTAINER = os.getenv(
         "AZURE_STORAGE_CONTAINER"
+    )
+
+    # Service Bus (Queue)
+    AZURE_SERVICE_BUS_CONNECTION_STRING = os.getenv(
+    "AZURE_SERVICE_BUS_CONNECTION_STRING"
+    )
+    
+    AZURE_SERVICE_BUS_QUEUE = os.getenv(
+        "AZURE_SERVICE_BUS_QUEUE"
     )
 
 

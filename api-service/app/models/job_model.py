@@ -42,3 +42,18 @@ class Job(db.Model):
         db.DateTime,
         default=datetime.utcnow
     )
+    
+    retry_count = db.Column(
+    db.Integer,
+    default=0
+    )
+
+    error_message = db.Column(
+        db.Text,
+        nullable=True
+    )
+
+    completed_at = db.Column(
+        db.DateTime,
+        nullable=True
+    )
