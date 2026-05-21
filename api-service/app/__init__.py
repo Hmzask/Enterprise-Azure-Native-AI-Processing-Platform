@@ -1,6 +1,7 @@
 from flask import Flask
 
 from app.config.settings import DevelopmentConfig
+from app.extensions import db, migrate
 
 
 def create_app():
@@ -9,8 +10,18 @@ def create_app():
 
     app.config.from_object(DevelopmentConfig)
 
-    from app.routes.health_routes import health_bp
+    # Initialize extensions
+    db.init_app(app)
+    migrate.init_app(app, db)
 
+
+    # REGISTER BLUPRINTS
+    # Health Blueprint
+    from app.routes.health_routes import health_bp
     app.register_blueprint(health_bp)
+
+    # Job Blueprint
+    from app.routes.job_routes import job_bp
+    app.register_blueprint(job_bp)
 
     return app

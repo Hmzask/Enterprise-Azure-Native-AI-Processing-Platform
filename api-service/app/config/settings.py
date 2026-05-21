@@ -10,6 +10,10 @@ class Config:
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        "DATABASE_URL"
+    )
+
     AZURE_STORAGE_CONNECTION_STRING = os.getenv(
         "AZURE_STORAGE_CONNECTION_STRING"
     )
