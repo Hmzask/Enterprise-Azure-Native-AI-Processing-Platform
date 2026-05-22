@@ -1,3 +1,8 @@
+from azure.foundry_client import AzureFoundryClient
+
+
 def generate_summary(text):
 
-    return f"AI Summary: {text[:100]}"
+    client = AzureFoundryClient()
+
+    return client.summarize_text(text)

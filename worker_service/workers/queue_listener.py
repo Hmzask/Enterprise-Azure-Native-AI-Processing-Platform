@@ -2,8 +2,8 @@ import json
 from datetime import datetime
 import os
 import time
-
 from dotenv import load_dotenv
+
 from azure.servicebus import ServiceBusClient
 
 
