@@ -1,40 +1,54 @@
 from worker_service.ai.summarizer import generate_summary
-from worker_service.ai.speech_to_text import transcribe_audio
-from worker_service.ai.image_ocr import extract_text_from_image
+
+from worker_service.ai.image_ocr import AzureOCRService
+
+from worker_service.ai.speech_to_text import AzureSpeechService
+
+from worker_service.ai.pdf_extractor import PDFExtractor
 
 
 class AIOrchestrator:
 
-    def process(
-        self,
-        file_type,
-        file_path
-    ):
+    def process(self,file_type,file_path):
 
-        # Audio Pipeline
-        if "audio" in file_type:
+        extracted_text = ""
 
-            transcript = transcribe_audio(file_path)
-            summary = generate_summary(transcript)
+        # IMAGE OCR
+        if "image" in file_type:
 
-            return {
-                "transcript": transcript,
-                "summary": summary
-            }
+            ocr_service = AzureOCRService()
+            extracted_text = ocr_service.extract_text(
+                file_path
+            )
 
-        # Image Pipeline
-        elif "image" in file_type:
+        # AUDIO TRANSCRIPTION
+        elif "audio" in file_type:
 
-            extracted_text = extract_text_from_image(file_path)
-            summary = generate_summary(extracted_text)
+            speech_service = AzureSpeechService()
+            extracted_text = speech_service.transcribe_audio(
+                file_path
+            )
 
-            return {
-                "ocr_text": extracted_text,
-                "summary": summary
-            }
+        # PDF EXTRACTION
+        elif "pdf" in file_type:
 
-        # Default
+            pdf_service = PDFExtractor()
+            extracted_text = pdf_service.extract_text(
+                file_path
+            )
+
         else:
-            return {
-                "message": "Unsupported file type"
-            }
+
+            extracted_text = (
+                "Unsupported file type"
+            )
+
+        # GPT Summary
+        summary = generate_summary(
+            extracted_text
+        )
+
+        return {
+            "extracted_text": extracted_text,
+            "summary": summary
+        }
