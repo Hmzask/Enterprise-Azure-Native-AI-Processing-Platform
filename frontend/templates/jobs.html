@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h2>Processing Jobs</h2>
+
+<table class="table table-bordered">
+
+    <thead>
+
+        <tr>
+
+            <th>Job ID</th>
+            <th>File</th>
+            <th>Status</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody id="jobsTable">
+
+    </tbody>
+
+</table>
+
+<script src="{{ url_for('static', filename='js/polling.js') }}"></script>
+
+{% endblock %}
