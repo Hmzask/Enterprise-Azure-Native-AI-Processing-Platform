@@ -1,27 +1,57 @@
 {% extends "base.html" %}
-
 {% block content %}
 
 <h2>Admin Operations Dashboard</h2>
 
-<div class="card shadow">
+<div class="row">
 
-    <div class="card-body">
+    <div class="col-md-4">
 
-        <ul>
+        <div class="card text-bg-primary">
 
-            <li>Total Workers: 3</li>
+            <div class="card-body">
 
-            <li>Queue Depth: 12</li>
+                <h5>Queue Depth</h5>
 
-            <li>Failed Jobs: 2</li>
+                <h2 id="queueDepth">0</h2>
 
-            <li>Blob Storage Healthy</li>
+            </div>
 
-        </ul>
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card text-bg-success">
+
+            <div class="card-body">
+
+                <h5>Completed Jobs</h5>
+
+                <h2 id="completedJobs">0</h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-md-4">
+
+        <div class="card text-bg-danger">
+
+            <div class="card-body">
+
+                <h5>Failed Jobs</h5>
+
+                <h2 id="failedJobs">0</h2>
+
+            </div>
+
+        </div>
 
     </div>
 
 </div>
-
 {% endblock %}

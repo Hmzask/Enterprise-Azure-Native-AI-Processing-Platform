@@ -1,3 +1,6 @@
+console.log("UPLOAD JS LOADED")
+
+
 document
     .getElementById("uploadForm")
 
@@ -5,37 +8,69 @@ document
 
         e.preventDefault()
 
+        console.log("FORM SUBMITTED")
+
         const fileInput = document
             .getElementById("fileInput")
 
         const formData = new FormData()
 
         formData.append(
+
             "file",
+
             fileInput.files[0]
         )
 
-        const response = await fetch(
+        try {
 
-            "/api/v1/upload/",
+            const response = await fetch(
 
-            {
-                method: "POST",
-                body: formData
-            }
-        )
+                "http://localhost:5000/api/v1/upload/",
 
-        const data = await response.json()
+                {
 
-        document
-            .getElementById("uploadStatus")
-            .innerHTML = `
+                    method: "POST",
 
-            <div class="alert alert-success">
+                    body: formData,
 
-                Job Created:
-                ${data.job_id}
+                    credentials: "include"
+                }
+            )
 
-            </div>
-        `
+            console.log(response)
+
+            const data = await response.json()
+
+            console.log(data)
+
+            document
+                .getElementById("uploadStatus")
+
+                .innerHTML = `
+
+                <div class="alert alert-success">
+
+                    Job Created:
+                    ${data.job_id}
+
+                </div>
+                `
+
+        } catch (error) {
+
+            console.error(error)
+
+            document
+                .getElementById("uploadStatus")
+
+                .innerHTML = `
+
+                <div class="alert alert-danger">
+
+                    Upload Failed
+
+                </div>
+                `
+        }
     })

@@ -4,10 +4,7 @@ async function loadResults() {
         .split("/")
         .pop()
 
-    const response = await fetch(
-
-        `/api/v1/jobs/${jobId}`
-    )
+    const response = await fetch(`http://localhost:5000/api/v1/jobs/${jobId}`)
 
     const data = await response.json()
 

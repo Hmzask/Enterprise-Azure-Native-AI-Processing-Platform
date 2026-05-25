@@ -1,9 +1,7 @@
 async function loadJobs() {
 
-    const response = await fetch(
-        "/api/v1/jobs"
-    )
-
+    const response = await fetch("http://localhost:5000/api/v1/jobs")
+    
     const jobs = await response.json()
 
    rows += `

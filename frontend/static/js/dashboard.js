@@ -1,8 +1,6 @@
 async function loadMetrics() {
 
-    const response = await fetch(
-        "/api/v1/dashboard/metrics"
-    )
+    const response = await fetch("http://localhost:5000/api/v1/dashboard/metrics")
 
     const data = await response.json()
 
