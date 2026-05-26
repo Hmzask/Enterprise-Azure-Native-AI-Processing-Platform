@@ -16,10 +16,7 @@ from worker_service.logger import logger
 
 
 from dotenv import load_dotenv
-BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-env_path = os.path.join(BASE_DIR, "../../.env")
-
-load_dotenv(dotenv_path=env_path)
+load_dotenv()
 
 
 CONNECTION_STRING = os.getenv(
@@ -38,15 +35,30 @@ def process_message(message_data):
     logger.info(
         f"Starting processing for job {job_id}"
         )
-
+    
     with app.app_context():
-        job = db.session.get(Job, job_id)
+        job = None
+
+        for attempt in range(5):
+
+            job = db.session.get(Job, job_id)
+
+            if job:
+                break
+
+            logger.warning(
+                f"Job {job_id} not found "
+                f"(attempt {attempt + 1}/5)"
+            )
+
+            time.sleep(2)
 
         if not job:
-            logger.warning(
-                f"Job {job_id} not found"
-                )
-            return
+
+            raise Exception(
+                f"Job {job_id} missing in database "
+                f"after retries"
+            )
 
         try:
             # Update status
@@ -106,9 +118,6 @@ def process_message(message_data):
             logger.info(
                 f"AI processing completed for job {job_id}"
             )
-
-            # Simulate AI work
-            time.sleep(5)
 
             # Store AI results
             job.ai_result = json.dumps(results)
@@ -174,44 +183,51 @@ def listen_to_queue():
         )
 
         with receiver:
+            logger.info("Listening for messages...")
+            while (True):
+                messages = receiver.receive_messages(
+                    max_message_count=1,
+                    max_wait_time=5
+                )
+                if not messages:
+                    continue
 
-            print("Listening for messages...\n")
-            for message in receiver:
+                for message in messages:
 
-                try:
-                    logger.info(
-                        "New message received from queue"
-                    )
-                    # Converting messege into JSON Format
-                    body = str(message)
-                    data = json.loads(body)
+                    try:
+                        logger.info(
+                            "New message received from queue"
+                        )
+                        # Converting messege into JSON Format
+                        body = b"".join(message.body).decode("utf-8")
+                        data = json.loads(body)
 
-                    logger.info(
-                        f"Received job message "
-                        f"for job {data['job_id']}"
-                    )
+                        logger.info(
+                            f"Received job message "
+                            f"for job {data['job_id']}"
+                        )
 
-                    process_message(data)
+                        process_message(data)
 
-                    # Complete message
-                    receiver.complete_message(message)
+                        # Complete message
+                        receiver.complete_message(message)
 
-                    logger.info(
-                        f"Queue message completed "
-                        f"for job {data['job_id']}"
-                    )
+                        logger.info(
+                            f"Queue message completed "
+                            f"for job {data['job_id']}"
+                        )
 
-                except Exception as error:
+                    except Exception as error:
 
-                    logger.exception(
-                        f"Queue processing failed: "
-                        f"{str(error)}"
-                    )
-                    receiver.abandon_message(message)
+                        logger.exception(
+                            f"Queue processing failed: "
+                            f"{str(error)}"
+                        )
+                        receiver.abandon_message(message)
 
-                    logger.warning(
-                        "Message abandoned back to queue"
-                    )
+                        logger.warning(
+                            "Message abandoned back to queue"
+                        )
 
 
 if __name__ == "__main__":

@@ -1,76 +1,92 @@
 console.log("UPLOAD JS LOADED")
 
-
 document
-    .getElementById("uploadForm")
+.getElementById("uploadForm")
 
-    .addEventListener("submit", async (e) => {
 
-        e.preventDefault()
+.addEventListener("submit", async (e) => {
 
-        console.log("FORM SUBMITTED")
+    e.preventDefault()
 
-        const fileInput = document
-            .getElementById("fileInput")
+    console.log("FORM SUBMITTED")
 
-        const formData = new FormData()
+    const fileInput = document
+        .getElementById("fileInput")
 
-        formData.append(
+    if (!fileInput.files.length) {
 
-            "file",
+        alert("Please select a file")
 
-            fileInput.files[0]
+        return
+    }
+
+    const formData = new FormData()
+
+    formData.append(
+
+        "file",
+
+        fileInput.files[0]
+    )
+
+    try {
+
+        const response = await fetch(
+
+            "http://localhost:5000/api/v1/upload/",
+
+            {
+
+                method: "POST",
+
+                body: formData,
+
+                credentials: "include"
+            }
         )
 
-        try {
+        console.log("STATUS:", response.status)
 
-            const response = await fetch(
+        const data = await response.json()
 
-                "http://localhost:5000/api/v1/upload/",
+        console.log(data)
 
-                {
+        if (!response.ok) {
 
-                    method: "POST",
-
-                    body: formData,
-
-                    credentials: "include"
-                }
+            throw new Error(
+                data.error || "Upload failed"
             )
-
-            console.log(response)
-
-            const data = await response.json()
-
-            console.log(data)
-
-            document
-                .getElementById("uploadStatus")
-
-                .innerHTML = `
-
-                <div class="alert alert-success">
-
-                    Job Created:
-                    ${data.job_id}
-
-                </div>
-                `
-
-        } catch (error) {
-
-            console.error(error)
-
-            document
-                .getElementById("uploadStatus")
-
-                .innerHTML = `
-
-                <div class="alert alert-danger">
-
-                    Upload Failed
-
-                </div>
-                `
         }
-    })
+
+        document
+            .getElementById("uploadStatus")
+
+            .innerHTML = `
+
+            <div class="alert alert-success">
+
+                Job Created:
+                ${data.job_id}
+
+            </div>
+            `
+
+    } catch (error) {
+
+        console.error(error)
+
+        document
+            .getElementById("uploadStatus")
+
+            .innerHTML = `
+
+            <div class="alert alert-danger">
+
+                Upload Failed:
+                ${error.message}
+
+            </div>
+            `
+    }
+})
+
