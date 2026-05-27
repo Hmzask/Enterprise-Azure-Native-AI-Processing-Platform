@@ -1,23 +1,23 @@
 {% extends "base.html" %}
+
 {% block content %}
-
-
 
 <h2 class="mb-4">
 
-    AI Workflow Dashboard
+    Enterprise AI Operations Center
 
 </h2>
 
-<div class="row">
+<!-- METRICS ROW -->
+<div class="row mb-4">
 
     <div class="col-md-3">
 
-        <div class="card text-bg-primary">
+        <div class="card shadow border-0">
 
             <div class="card-body">
 
-                <h5>Total Jobs</h5>
+                <h6>Total Jobs</h6>
 
                 <h2 id="totalJobs">0</h2>
 
@@ -29,13 +29,13 @@
 
     <div class="col-md-3">
 
-        <div class="card text-bg-warning">
+        <div class="card shadow border-0">
 
             <div class="card-body">
 
-                <h5>Processing</h5>
+                <h6>Processing</h6>
 
-                <h2 id="Processing_Jobs">0</h2>
+                <h2 id="processingJobs">0</h2>
 
             </div>
 
@@ -45,13 +45,13 @@
 
     <div class="col-md-3">
 
-        <div class="card text-bg-success">
+        <div class="card shadow border-0">
 
             <div class="card-body">
 
-                <h5>Completed</h5>
+                <h6>Completed</h6>
 
-                <h2 id="Completed_Jobs">0</h2>
+                <h2 id="completedJobs">0</h2>
 
             </div>
 
@@ -61,13 +61,13 @@
 
     <div class="col-md-3">
 
-        <div class="card text-bg-danger">
+        <div class="card shadow border-0">
 
             <div class="card-body">
 
-                <h5>Failed</h5>
+                <h6>Failed</h6>
 
-                <h2 id="Failed_Jobs">0</h2>
+                <h2 id="failedJobs">0</h2>
 
             </div>
 
@@ -77,9 +77,81 @@
 
 </div>
 
-{% endblock %}
+
+<!-- LIVE JOBS -->
+<div class="row">
+
+    <div class="col-md-7">
+
+        <div class="card shadow border-0">
+
+            <div class="card-body">
+
+                <h5 class="mb-3">
+
+                    Live Processing Jobs
+
+                </h5>
+
+                <table class="table">
+
+                    <thead>
+
+
+                        <tr>
+
+                            <th>File</th>
+                            <th>Status</th>
+                            <th>Created</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="recentJobsTable">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- AUDIT LOGS -->
+    <div class="col-md-5">
+
+        <div class="card shadow border-0">
+
+            <div class="card-body">
+
+                <h5 class="mb-3">
+
+                    Recent Audit Events
+
+                </h5>
+
+                <ul
+                    class="list-group"
+                    id="auditLogsList"
+                >
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 <script src="{{ url_for(
     'static',
     filename='js/dashboard.js'
 ) }}"></script>
+
+{% endblock %}

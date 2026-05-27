@@ -39,7 +39,7 @@ def process_message(message_data):
     with app.app_context():
         job = None
 
-        for attempt in range(5):
+        for attempt in range(2):
 
             job = db.session.get(Job, job_id)
 
@@ -48,7 +48,7 @@ def process_message(message_data):
 
             logger.warning(
                 f"Job {job_id} not found "
-                f"(attempt {attempt + 1}/5)"
+                f"(attempt {attempt + 1}/2)"
             )
 
             time.sleep(2)
@@ -137,6 +137,11 @@ def process_message(message_data):
                 f"Job {job_id} completed successfully"
             )
 
+            logger.info(
+                f"Here is the Result {results}"
+            )
+
+
             if os.path.exists(temp_file_path):
 
                 os.remove(temp_file_path)
@@ -223,7 +228,15 @@ def listen_to_queue():
                             f"Queue processing failed: "
                             f"{str(error)}"
                         )
-                        receiver.abandon_message(message)
+                        
+                        if message.delivery_count > 5:
+                            receiver.dead_letter_message(
+                                message,
+                                reason="AudioProcessingFailed",
+                                error_description=str(error)
+                            )
+                        else:
+                            receiver.abandon_message(message)
 
                         logger.warning(
                             "Message abandoned back to queue"
