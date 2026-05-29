@@ -1,10 +1,10 @@
-from worker_service.ai.summarizer import generate_summary
+from ai.summarizer import generate_summary
 
-from worker_service.ai.image_ocr import AzureOCRService
+from ai.image_ocr import AzureOCRService
 
-from worker_service.ai.speech_to_text import AzureSpeechService
+from ai.speech_to_text import AzureSpeechService
 
-from worker_service.ai.pdf_extractor import PDFExtractor
+from ai.pdf_extractor import PDFExtractor
 
 
 class AIOrchestrator:

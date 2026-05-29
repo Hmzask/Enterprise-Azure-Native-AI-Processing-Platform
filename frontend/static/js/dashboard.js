@@ -1,129 +1,150 @@
 async function loadDashboard() {
 
-    const response = await fetch(
-        "http://localhost:5000/api/v1/dashboard/metrics",
-        {
+    try {
 
-        credentials: "include"
+        const response = await fetch(
+            "http://localhost:5000/api/v1/dashboard/metrics",
+            {
+                credentials: "include"
+            }
+        )
+
+        if (!response.ok) {
+
+            console.error(
+                "Dashboard API failed:",
+                response.status
+            )
+
+            return
         }
-    )
 
-    const data = await response.json()
+        const data = await response.json()
 
+        // PLATFORM METRICS
+        document.getElementById(
+            "totalJobs"
+        ).innerText =
+            data?.total_jobs ?? 0
 
-    // PLATFORM METRICS
-document.getElementById(
-    "totalJobs"
-).innerText =
-    data.total_jobs
+        document.getElementById(
+            "processingJobs"
+        ).innerText =
+            data?.processing_jobs ?? 0
 
-document.getElementById(
-    "processingJobs"
-).innerText =
-    data.processing_jobs
+        document.getElementById(
+            "completedJobs"
+        ).innerText =
+            data?.completed_jobs ?? 0
 
-document.getElementById(
-    "completedJobs"
-).innerText =
-    data.completed_jobs
-
-document.getElementById(
-    "failedJobs"
-).innerText =
-    data.failed_jobs
+        document.getElementById(
+            "failedJobs"
+        ).innerText =
+            data?.failed_jobs ?? 0
 
 
-    // LIVE JOBS TABLE
-    let jobRows = ""
+        // LIVE JOBS TABLE
+        let jobRows = ""
 
-    data.recent_jobs.forEach(job => {
+        if (data?.recent_jobs) {
 
-        jobRows += `
+            data.recent_jobs.forEach(job => {
 
-        <tr>
+                jobRows += `
 
-            <td>${job.file_name}</td>
+                <tr>
 
-            <td>
+                    <td>${job.file_name}</td>
 
-                <span class="badge bg-${
-                    getStatusColor(job.status)
-                }">
+                    <td>
 
-                    ${job.status}
+                        <span class="badge bg-${
+                            getStatusColor(job.status)
+                        }">
 
-                </span>
+                            ${job.status}
 
-            </td>
+                        </span>
 
-            <td>${job.retry_count}</td>
+                    </td>
 
-            <td>
+                    <td>${job.retry_count}</td>
 
-                ${formatDate(job.created_at)}
+                    <td>
+                        ${formatDate(job.created_at)}
+                    </td>
 
-            </td>
+                </tr>
+                `
+            })
+        }
 
-        </tr>
-        `
-    })
-
-    document.getElementById(
-        "recentJobsTable"
-    ).innerHTML = jobRows
+        document.getElementById(
+            "recentJobsTable"
+        ).innerHTML = jobRows
 
 
-const auditLogsList = document.getElementById(
-    "auditLogsList"
-)
+        // AUDIT LOGS
+        const auditLogsList =
+            document.getElementById(
+                "auditLogsList"
+            )
 
-auditLogsList.innerHTML = ""
+        auditLogsList.innerHTML = ""
 
-if (
-    data.recent_audit_logs &&
-    data.recent_audit_logs.length > 0
-) {
+        if (
+            data?.recent_audit_logs &&
+            data.recent_audit_logs.length > 0
+        ) {
 
-    data.recent_audit_logs.forEach((log) => {
+            data.recent_audit_logs.forEach((log) => {
 
-        auditLogsList.innerHTML += `
+                auditLogsList.innerHTML += `
 
-        <li class="list-group-item">
+                <li class="list-group-item">
 
-            <strong>
-                ${log.event_type}
-            </strong>
+                    <strong>
+                        ${log.event_type}
+                    </strong>
 
-            <br>
+                    <br>
 
-            ${log.details}
+                    ${log.details}
 
-            <br>
+                    <br>
 
-            <small class="text-muted">
+                    <small class="text-muted">
 
-                ${new Date(
-                    log.created_at
-                ).toLocaleString()}
+                        ${new Date(
+                            log.created_at
+                        ).toLocaleString()}
 
-            </small>
+                    </small>
 
-        </li>
-        `
-    })
+                </li>
+                `
+            })
 
-} else {
+        } else {
 
-    auditLogsList.innerHTML = `
+            auditLogsList.innerHTML = `
 
-    <li class="list-group-item">
+            <li class="list-group-item">
 
-        No audit logs available
+                No audit logs available
 
-    </li>
-    `
+            </li>
+            `
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Dashboard loading failed:",
+            error
+        )
+    }
 }
-
 
 
 function getStatusColor(status) {
@@ -148,8 +169,7 @@ function formatDate(dateString) {
 }
 
 
-// AUTO REFRESH EVERY 3 SECONDS
+// AUTO REFRESH
 setInterval(loadDashboard, 3000)
-}
 
 loadDashboard()

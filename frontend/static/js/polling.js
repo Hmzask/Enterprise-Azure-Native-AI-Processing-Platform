@@ -1,44 +1,95 @@
 async function loadJobs() {
 
-    const response = await fetch("http://localhost:5000/api/v1/jobs")
-    
-    const jobs = await response.json()
-    let rows = ""
+    try {
 
-   rows += `
+        const response = await fetch(
+            "http://localhost:5000/api/v1/jobs",
+            {
+                credentials: "include"
+            }
+        )
 
-<tr>
+        if (!response.ok) {
 
-    <td>
+            console.error(
+                "Jobs API failed:",
+                response.status
+            )
 
-        <a href="/results/${job.id}">
+            return
+        }
 
-            ${job.id}
+        const jobs = await response.json()
 
-        </a>
+        let rows = ""
 
-    </td>
+        if (jobs && jobs.length > 0) {
 
-    <td>${job.file_name}</td>
+            jobs.forEach(job => {
 
-    <td>
+                rows += `
 
-        <span class="badge bg-${
-            getStatusColor(job.status)
-        }">
+                <tr>
 
-            ${job.status}
+                    <td>
 
-        </span>
+                        <a href="/results/${job.id}">
 
-    </td>
+                            ${job.id}
 
-</tr>
-`
+                        </a>
 
-    document
-        .getElementById("jobsTable")
-        .innerHTML = rows
+                    </td>
+
+                    <td>
+
+                        ${job.file_name}
+
+                    </td>
+
+                    <td>
+
+                        <span class="badge bg-${
+                            getStatusColor(job.status)
+                        }">
+
+                            ${job.status}
+
+                        </span>
+
+                    </td>
+
+                </tr>
+                `
+            })
+
+        } else {
+
+            rows = `
+
+            <tr>
+
+                <td colspan="3" class="text-center">
+
+                    No jobs available
+
+                </td>
+
+            </tr>
+            `
+        }
+
+        document
+            .getElementById("jobsTable")
+            .innerHTML = rows
+
+    } catch (error) {
+
+        console.error(
+            "Failed to load jobs:",
+            error
+        )
+    }
 }
 
 
@@ -57,6 +108,7 @@ function getStatusColor(status) {
 }
 
 
+// AUTO REFRESH EVERY 3 SECONDS
 setInterval(loadJobs, 3000)
 
 loadJobs()

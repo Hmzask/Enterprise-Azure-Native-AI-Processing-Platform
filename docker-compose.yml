@@ -1,0 +1,84 @@
+
+
+services:
+
+  frontend:
+
+    build:
+      context: ./frontend
+
+    container_name: enterprise_frontend
+
+    ports:
+      - "3000:3000"
+
+    env_file:
+      - .env
+
+    depends_on:
+      - api_service
+
+    networks:
+      - enterprise_network
+
+
+
+  api_service:
+
+    build:
+      context: ./api_service
+
+    container_name: enterprise_api
+
+    ports:
+      - "5000:5000"
+
+    env_file:
+      - .env
+
+    depends_on:
+      - worker_service
+
+    networks:
+      - enterprise_network
+
+
+
+  worker_service:
+
+    build:
+      context: ./worker_service
+
+    container_name: enterprise_worker
+
+    env_file:
+      - .env
+
+    networks:
+      - enterprise_network
+
+
+
+  nginx:
+
+    build:
+      context: ./nginx
+
+    container_name: enterprise_nginx
+
+    ports:
+      - "8080:80"
+
+    depends_on:
+      - frontend
+      - api_service
+
+    networks:
+      - enterprise_network
+
+
+
+networks:
+
+  enterprise_network:
+

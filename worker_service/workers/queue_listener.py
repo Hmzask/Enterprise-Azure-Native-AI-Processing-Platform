@@ -6,21 +6,21 @@ from datetime import datetime
 from dotenv import load_dotenv
 from azure.servicebus import ServiceBusClient
 
-from worker_service.azure.blob_client import (
+from azure_clients.blob_client import (
     AzureBlobDownloader
 )
 
-from worker_service.ai.ai_orchestrator import (
+from ai.ai_orchestrator import (
     AIOrchestrator
 )
 
-from worker_service.workers.worker_db import (
+from workers.worker_db import (
     create_worker_app,
     db
 )
 
-from worker_service.workers.models import Job
-from worker_service.logger import logger
+from workers.models import Job
+from logger import logger
 
 
 # =========================================================
@@ -175,6 +175,7 @@ def process_message(message_data, delivery_count=0):
             logger.info(
                 f"AI results stored "
                 f"for job {job_id}"
+                f"{results}"
             )
 
             # -------------------------------------------------
@@ -191,11 +192,14 @@ def process_message(message_data, delivery_count=0):
             db.session.commit()
 
             logger.info(
-                f"Job {job_id} completed successfully"
+                f"Job {job_id} completed successfully\n"
             )
 
             logger.info(
-                f"Result: {results}"
+                "\n================ AI RESULT ================\n"
+                f"Extracted Text:\n{results.get('extracted_text')}\n\n"
+                f"Summary:\n{results.get('summary')}\n"
+                "===========================================\n"
             )
 
         except Exception as error:
@@ -350,6 +354,9 @@ def listen_to_queue():
                             f"Queue message completed "
                             f"for job {data['job_id']}"
                         )
+
+                       
+
 
                     except Exception as error:
 

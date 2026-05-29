@@ -1,4 +1,4 @@
-from worker_service.azure.foundry_client import AzureFoundryClient
+from azure_clients.foundry_client import AzureFoundryClient
 
 
 def generate_summary(text):

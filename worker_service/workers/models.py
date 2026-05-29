@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from worker_service.workers.worker_db import db
+from workers.worker_db import db
 
 
 class Job(db.Model):

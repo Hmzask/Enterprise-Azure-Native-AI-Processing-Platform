@@ -1,4 +1,4 @@
-from worker_service.workers.queue_listener import (
+from workers.queue_listener import (
     listen_to_queue
 )
 
