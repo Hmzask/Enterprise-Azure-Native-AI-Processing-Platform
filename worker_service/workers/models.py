@@ -29,5 +29,13 @@ class Job(db.Model):
     )
 
     ai_result = db.Column(
-    db.Text
+        db.Text
     )   
+
+    file_name = db.Column(
+    db.String
+    )
+
+    created_at = db.Column(
+        db.DateTime
+    )

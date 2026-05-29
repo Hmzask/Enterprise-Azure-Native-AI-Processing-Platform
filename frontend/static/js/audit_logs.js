@@ -2,7 +2,12 @@ async function loadLogs() {
 
     const response = await fetch(
 
-        "http://localhost:5000/api/v1/admin/audit-logs"
+        "http://localhost:5000/api/v1/admin/audit-logs",
+
+        {
+
+        credentials: "include"
+        }
     )
 
     const logs = await response.json()

@@ -1,23 +1,33 @@
 import json
-from datetime import datetime
 import os
 import time
-import os
+from datetime import datetime
 
-
+from dotenv import load_dotenv
 from azure.servicebus import ServiceBusClient
-from worker_service.azure.blob_client import AzureBlobDownloader
 
-from worker_service.ai.ai_orchestrator import AIOrchestrator
-from worker_service.workers.worker_db import create_worker_app
-from worker_service.workers.worker_db import db
+from worker_service.azure.blob_client import (
+    AzureBlobDownloader
+)
+
+from worker_service.ai.ai_orchestrator import (
+    AIOrchestrator
+)
+
+from worker_service.workers.worker_db import (
+    create_worker_app,
+    db
+)
+
 from worker_service.workers.models import Job
 from worker_service.logger import logger
 
 
-from dotenv import load_dotenv
-load_dotenv()
+# =========================================================
+# ENVIRONMENT VARIABLES
+# =========================================================
 
+load_dotenv()
 
 CONNECTION_STRING = os.getenv(
     "AZURE_SERVICE_BUS_CONNECTION_STRING"
@@ -27,19 +37,36 @@ QUEUE_NAME = os.getenv(
     "AZURE_SERVICE_BUS_QUEUE"
 )
 
+
+# =========================================================
+# FLASK APP CONTEXT
+# =========================================================
+
 app = create_worker_app()
 
-def process_message(message_data):
+
+# =========================================================
+# PROCESS MESSAGE
+# =========================================================
+
+def process_message(message_data, delivery_count=0):
 
     job_id = message_data["job_id"]
+
     logger.info(
         f"Starting processing for job {job_id}"
-        )
-    
+    )
+    temp_file_path = None
+
     with app.app_context():
+
         job = None
 
-        for attempt in range(2):
+        # -------------------------------------------------
+        # Retry DB fetch
+        # -------------------------------------------------
+
+        for attempt in range(3):
 
             job = db.session.get(Job, job_id)
 
@@ -48,7 +75,7 @@ def process_message(message_data):
 
             logger.warning(
                 f"Job {job_id} not found "
-                f"(attempt {attempt + 1}/2)"
+                f"(attempt {attempt + 1}/3)"
             )
 
             time.sleep(2)
@@ -61,23 +88,40 @@ def process_message(message_data):
             )
 
         try:
-            # Update status
+
+            # -------------------------------------------------
+            # Update Job Status
+            # -------------------------------------------------
+
             job.status = "PROCESSING"
+
             db.session.commit()
 
             logger.info(
-                f"Job {job_id} status updated to PROCESSING"
-                )
+                f"Job {job_id} status updated "
+                f"to PROCESSING"
+            )
 
-            # Create temp folder
-            os.makedirs("temp_processing", exist_ok=True)
+            # -------------------------------------------------
+            # Create Temp Directory
+            # -------------------------------------------------
+
+            os.makedirs(
+                "temp_processing",
+                exist_ok=True
+            )
 
             logger.info(
                 "Temporary processing directory verified"
-                )
+            )
 
-            # Download blob
-            blob_downloader = AzureBlobDownloader()
+            # -------------------------------------------------
+            # Download Blob
+            # -------------------------------------------------
+
+            blob_downloader = (
+                AzureBlobDownloader()
+            )
 
             blob_name = message_data["blob_name"]
 
@@ -100,14 +144,16 @@ def process_message(message_data):
                 f"Blob downloaded successfully to "
                 f"{temp_file_path}"
             )
-            
+
+            # -------------------------------------------------
+            # AI PROCESSING
+            # -------------------------------------------------
 
             logger.info(
-                f"Starting AI orchestration for job {job_id}"
+                f"Starting AI orchestration "
+                f"for job {job_id}"
             )
 
-
-            # Run AI pipeline
             orchestrator = AIOrchestrator()
 
             results = orchestrator.process(
@@ -116,20 +162,31 @@ def process_message(message_data):
             )
 
             logger.info(
-                f"AI processing completed for job {job_id}"
+                f"AI processing completed "
+                f"for job {job_id}"
             )
 
-            # Store AI results
+            # -------------------------------------------------
+            # Store Results
+            # -------------------------------------------------
+
             job.ai_result = json.dumps(results)
 
             logger.info(
-                f"AI results stored for job {job_id}"
+                f"AI results stored "
+                f"for job {job_id}"
             )
 
-            
-            # Update status
+            # -------------------------------------------------
+            # COMPLETE JOB
+            # -------------------------------------------------
+
             job.status = "COMPLETED"
-            job.completed_at = datetime.now()
+
+            job.completed_at = datetime.utcnow()
+
+            job.retry_count = 0
+            job.error_message = None
 
             db.session.commit()
 
@@ -138,42 +195,86 @@ def process_message(message_data):
             )
 
             logger.info(
-                f"Here is the Result {results}"
+                f"Result: {results}"
             )
 
+        except Exception as error:
 
-            if os.path.exists(temp_file_path):
+                logger.exception(
+                    f"Worker failed while processing "
+                    f"job {job_id}: {str(error)}"
+                )
+
+                db.session.rollback()
+
+                job = db.session.get(Job, job_id)
+
+                if not job:
+                    raise Exception(
+                        f"Job {job_id} disappeared from DB"
+                    )
+
+                # =========================================
+                # RETRY TRACKING
+                # =========================================
+
+                job.retry_count += 1
+
+                job.error_message = str(error)
+
+                # =========================================
+                # STATUS MANAGEMENT
+                # =========================================
+
+                if delivery_count >= 3:
+
+                    job.status = "FAILED"
+
+                    logger.error(
+                        f"Job {job_id} permanently failed"
+                    )
+
+                else:
+
+                    job.status = "RETRYING"
+
+                    logger.warning(
+                        f"Job {job_id} scheduled for retry"
+                    )
+
+                db.session.commit()
+
+                raise error
+        finally:
+
+            # ---------------------------------------------
+            # CLEAN TEMP FILES
+            # ---------------------------------------------
+
+            if (temp_file_path and os.path.exists(temp_file_path)):
 
                 os.remove(temp_file_path)
+
                 logger.info(
                     f"Temporary file removed: "
                     f"{temp_file_path}"
                 )
 
 
-
-        except Exception as error:
-            logger.exception(
-                f"Worker failed while processing "
-                f"job {job_id}: {str(error)}"
-            )
-
-            job.status = "FAILED"
-            job.retry_count += 1
-            job.error_message = str(error)
-            db.session.commit()
-
-            raise error
-
-
+# =========================================================
+# LISTEN TO QUEUE
+# =========================================================
 
 def listen_to_queue():
+
     logger.info(
         "Initializing Azure Service Bus client"
     )
 
-    client = ServiceBusClient.from_connection_string(
-        conn_str=CONNECTION_STRING
+    client = (
+        ServiceBusClient.from_connection_string(
+            conn_str=CONNECTION_STRING
+        )
     )
 
     with client:
@@ -188,23 +289,38 @@ def listen_to_queue():
         )
 
         with receiver:
-            logger.info("Listening for messages...")
-            while (True):
+
+            logger.info(
+                "Listening for messages..."
+            )
+
+            while True:
+
                 messages = receiver.receive_messages(
                     max_message_count=1,
                     max_wait_time=5
                 )
+
                 if not messages:
                     continue
 
                 for message in messages:
 
                     try:
+
                         logger.info(
-                            "New message received from queue"
+                            "New message received "
+                            "from queue"
                         )
-                        # Converting messege into JSON Format
-                        body = b"".join(message.body).decode("utf-8")
+
+                        # ---------------------------------
+                        # PARSE MESSAGE
+                        # ---------------------------------
+
+                        body = b"".join(
+                            [b for b in message.body]
+                        ).decode("utf-8")
+
                         data = json.loads(body)
 
                         logger.info(
@@ -212,10 +328,23 @@ def listen_to_queue():
                             f"for job {data['job_id']}"
                         )
 
-                        process_message(data)
+                        # ---------------------------------
+                        # PROCESS MESSAGE
+                        # ---------------------------------
 
-                        # Complete message
-                        receiver.complete_message(message)
+                        process_message(
+                            data,
+                            delivery_count=
+                            message.delivery_count
+                        )
+
+                        # ---------------------------------
+                        # COMPLETE MESSAGE
+                        # ---------------------------------
+
+                        receiver.complete_message(
+                            message
+                        )
 
                         logger.info(
                             f"Queue message completed "
@@ -228,23 +357,45 @@ def listen_to_queue():
                             f"Queue processing failed: "
                             f"{str(error)}"
                         )
-                        
-                        if message.delivery_count > 5:
+
+                        # ---------------------------------
+                        # DEAD LETTER LOGIC
+                        # ---------------------------------
+
+                        if message.delivery_count >= 3:
+
                             receiver.dead_letter_message(
                                 message,
-                                reason="AudioProcessingFailed",
-                                error_description=str(error)
+                                reason="ProcessingFailed",
+                                error_description=
+                                str(error)
                             )
+
+                            logger.warning(
+                                "Message moved to "
+                                "dead letter queue"
+                            )
+
                         else:
-                            receiver.abandon_message(message)
 
-                        logger.warning(
-                            "Message abandoned back to queue"
-                        )
+                            receiver.abandon_message(
+                                message
+                            )
 
+                            logger.warning(
+                                "Message abandoned "
+                                "back to queue"
+                            )
+
+
+# =========================================================
+# ENTRY POINT
+# =========================================================
 
 if __name__ == "__main__":
-        
-        logger.info("Worker service started")
 
-        listen_to_queue()
+    logger.info(
+        "Worker service started"
+    )
+
+    listen_to_queue()

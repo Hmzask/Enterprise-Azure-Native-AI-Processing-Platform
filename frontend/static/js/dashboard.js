@@ -1,32 +1,36 @@
 async function loadDashboard() {
 
     const response = await fetch(
-        "/api/v1/dashboard/metrics"
+        "http://localhost:5000/api/v1/dashboard/metrics",
+        {
+
+        credentials: "include"
+        }
     )
 
     const data = await response.json()
 
 
     // PLATFORM METRICS
-    document.getElementById(
-        "totalJobs"
-    ).innerText =
-        data.platform_metrics.total_jobs
+document.getElementById(
+    "totalJobs"
+).innerText =
+    data.total_jobs
 
-    document.getElementById(
-        "processingJobs"
-    ).innerText =
-        data.platform_metrics.processing_jobs
+document.getElementById(
+    "processingJobs"
+).innerText =
+    data.processing_jobs
 
-    document.getElementById(
-        "completedJobs"
-    ).innerText =
-        data.platform_metrics.completed_jobs
+document.getElementById(
+    "completedJobs"
+).innerText =
+    data.completed_jobs
 
-    document.getElementById(
-        "failedJobs"
-    ).innerText =
-        data.platform_metrics.failed_jobs
+document.getElementById(
+    "failedJobs"
+).innerText =
+    data.failed_jobs
 
 
     // LIVE JOBS TABLE
@@ -52,6 +56,8 @@ async function loadDashboard() {
 
             </td>
 
+            <td>${job.retry_count}</td>
+
             <td>
 
                 ${formatDate(job.created_at)}
@@ -67,28 +73,55 @@ async function loadDashboard() {
     ).innerHTML = jobRows
 
 
-    // AUDIT LOGS
-    let auditHtml = ""
+const auditLogsList = document.getElementById(
+    "auditLogsList"
+)
 
-    data.recent_audit_logs.forEach(log => {
+auditLogsList.innerHTML = ""
 
-        auditHtml += `
+if (
+    data.recent_audit_logs &&
+    data.recent_audit_logs.length > 0
+) {
+
+    data.recent_audit_logs.forEach((log) => {
+
+        auditLogsList.innerHTML += `
 
         <li class="list-group-item">
 
-            <strong>${log.event_type}</strong>
+            <strong>
+                ${log.event_type}
+            </strong>
 
             <br>
 
-            <small>${log.details}</small>
+            ${log.details}
+
+            <br>
+
+            <small class="text-muted">
+
+                ${new Date(
+                    log.created_at
+                ).toLocaleString()}
+
+            </small>
 
         </li>
         `
     })
 
-    document.getElementById(
-        "auditLogsList"
-    ).innerHTML = auditHtml
+} else {
+
+    auditLogsList.innerHTML = `
+
+    <li class="list-group-item">
+
+        No audit logs available
+
+    </li>
+    `
 }
 
 
@@ -117,5 +150,6 @@ function formatDate(dateString) {
 
 // AUTO REFRESH EVERY 3 SECONDS
 setInterval(loadDashboard, 3000)
+}
 
 loadDashboard()
