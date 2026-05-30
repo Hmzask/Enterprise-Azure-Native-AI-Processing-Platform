@@ -1,10 +1,10 @@
 
-__pycache__/
+.git
+.github
+__pycache__
 *.pyc
 .env
-app-venv/
-node_modules/
-*.db
-.azure/
-.idea/
-.vscode/
+venv
+app-venv
+node_modules
+
