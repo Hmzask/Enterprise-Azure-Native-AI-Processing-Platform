@@ -226,6 +226,11 @@ def process_message(message_data, delivery_count=0):
 
                 job.error_message = str(error)
 
+                logger.error(
+                    f"Job failed: {job_id} "
+                    f"Retry count: {job.retry_count}"
+                )
+
                 # =========================================
                 # STATUS MANAGEMENT
                 # =========================================
@@ -299,6 +304,7 @@ def listen_to_queue():
             )
 
             while True:
+                logger.info("Worker heartbeat active")
 
                 messages = receiver.receive_messages(
                     max_message_count=1,
