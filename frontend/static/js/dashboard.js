@@ -41,6 +41,12 @@ async function loadDashboard() {
             "failedJobs"
         ).innerText =
             data?.failed_jobs ?? 0
+        document.getElementById( "queueDepth" ).innerText = `${data?.queue_depth ?? 0}` 
+        document.getElementById( "avgProcessing" ).innerText = `${data?.avg_processing ?? 0}s` 
+        document.getElementById( "totalRetries" ).innerText = `${data?.total_retries ?? 0}` 
+        document.getElementById( "failuresToday" ).innerText = `${data?.failures_today ?? 0}`
+
+            
 
 
         // LIVE JOBS TABLE
