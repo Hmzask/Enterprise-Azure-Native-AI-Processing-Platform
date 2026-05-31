@@ -1,25 +1,79 @@
+
 {% extends "base.html" %}
 
 {% block content %}
 
-<h2 class="mb-4">
+<div class="container-fluid px-4 mt-4">
 
-    Enterprise AI Operations Center
+    <h2 class="mb-4">
 
-</h2>
+        Enterprise AI Operations Center
 
-<!-- METRICS ROW -->
-<div class="row mb-4">
+    </h2>
 
-    <div class="col-md-3">
 
-        <div class="card shadow border-0">
+    <!-- PRIMARY METRICS -->
+    <div class="row mb-4">
 
-            <div class="card-body">
+        <div class="col-md-3">
 
-                <h6>Total Jobs</h6>
+            <div class="card shadow border-0">
 
-                <h2 id="totalJobs">0</h2>
+                <div class="card-body">
+
+                    <h6>Total Jobs</h6>
+
+                    <h2 id="totalJobs">0</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body">
+
+                    <h6>Processing</h6>
+
+                    <h2 id="processingJobs">0</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body">
+
+                    <h6>Completed</h6>
+
+                    <h2 id="completedJobs">0</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card shadow border-0">
+
+                <div class="card-body">
+
+                    <h6>Failed</h6>
+
+                    <h2 id="failedJobs">0</h2>
+
+                </div>
 
             </div>
 
@@ -27,15 +81,69 @@
 
     </div>
 
-    <div class="col-md-3">
 
-        <div class="card shadow border-0">
+    <!-- ADVANCED METRICS -->
+    <div class="row mb-4">
 
-            <div class="card-body">
+        <div class="col-md-3">
 
-                <h6>Processing</h6>
+            <div class="card shadow border-0 bg-dark text-white">
 
-                <h2 id="processingJobs">0</h2>
+                <div class="card-body">
+
+                    <h6>Queue Depth</h6>
+
+                    <h2 id="queueDepth">0</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card shadow border-0 bg-dark text-white">
+
+                <div class="card-body">
+
+                    <h6>Avg Processing</h6>
+
+                    <h2 id="avgProcessing">0s</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card shadow border-0 bg-dark text-white">
+
+                <div class="card-body">
+
+                    <h6>Total Retries</h6>
+
+                    <h2 id="totalRetries">0</h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card shadow border-0 bg-dark text-white">
+
+                <div class="card-body">
+
+                    <h6>Failures Today</h6>
+
+                    <h2 id="failuresToday">0</h2>
+
+                </div>
 
             </div>
 
@@ -43,31 +151,80 @@
 
     </div>
 
-    <div class="col-md-3">
 
-        <div class="card shadow border-0">
+    <!-- LIVE JOBS + AUDIT LOGS -->
+    <div class="row">
 
-            <div class="card-body">
+        <!-- LIVE JOBS -->
+        <div class="col-md-7 mb-4">
 
-                <h6>Completed</h6>
+            <div class="card shadow border-0 h-100">
 
-                <h2 id="completedJobs">0</h2>
+                <div class="card-body">
+
+                    <h5 class="mb-3">
+
+                        Live Processing Jobs
+
+                    </h5>
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover table-striped align-middle">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>File</th>
+                                    <th>Status</th>
+                                    <th>Retries</th>
+                                    <th>Created</th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="recentJobsTable">
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
 
             </div>
 
         </div>
 
-    </div>
 
-    <div class="col-md-3">
+        <!-- AUDIT LOGS -->
+        <div class="col-md-5 mb-4">
 
-        <div class="card shadow border-0">
+            <div
+                class="card shadow border-0 h-100"
+                style="min-height: 500px;"
+            >
 
-            <div class="card-body">
+                <div class="card-body">
 
-                <h6>Failed</h6>
+                    <h5 class="mb-3">
 
-                <h2 id="failedJobs">0</h2>
+                        Recent Audit Events
+
+                    </h5>
+
+                    <ul
+                        class="list-group overflow-auto"
+                        id="auditLogsList"
+                        style="max-height: 420px;"
+                    >
+
+                    </ul>
+
+                </div>
 
             </div>
 
@@ -77,83 +234,6 @@
 
 </div>
 
-
-<!-- LIVE JOBS -->
-<div class="row">
-
-    <div class="col-md-7">
-
-        <div class="card shadow border-0">
-
-            <div class="card-body">
-
-                <h5 class="mb-3">
-
-                    Live Processing Jobs
-
-                </h5>
-
-                <table class="table table-hover table-striped">
-
-                        <thead>
-
-
-                            <tr>
-
-                                <th>File</th>
-                                <th>Status</th>
-                                <th>Retries</th>
-                                <th>Created</th>
-
-                            </tr>
-
-                        </thead>
-                    </table>
-
-                    <tbody id="recentJobsTable">
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <!-- AUDIT LOGS -->
-    <div class="col-md-5">
-
-        <div
-    class="card shadow border-0"
-    style="min-height: 350px;"
-    >
-
-            <div class="card-body">
-
-                <h5 class="mb-3">
-
-                    Recent Audit Events
-
-                </h5>
-
-                <ul
-                    class="list-group overflow-auto"
-                    id="auditLogsList"
-                    style="max-height: 300px;"
-                >
-
-                </ul>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
 
 <script src="{{ url_for(
     'static',
@@ -161,3 +241,4 @@
 ) }}"></script>
 
 {% endblock %}
+

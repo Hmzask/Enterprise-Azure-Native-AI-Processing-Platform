@@ -19,6 +19,14 @@ from workers.worker_db import (
     db
 )
 
+
+from workers.metrics_models import (
+    QueueMetrics,
+    AIUsage
+)
+
+
+
 from workers.models import Job
 from logger import logger
 
@@ -149,6 +157,8 @@ def process_message(message_data, delivery_count=0):
             # AI PROCESSING
             # -------------------------------------------------
 
+            start_time = time.time()
+
             logger.info(
                 f"Starting AI orchestration "
                 f"for job {job_id}"
@@ -171,6 +181,14 @@ def process_message(message_data, delivery_count=0):
             # -------------------------------------------------
 
             job.ai_result = json.dumps(results)
+            
+            job.model_used = "gpt-4o-mini"
+
+            job.prompt_version = "v1.0"
+
+            job.ai_pipeline_version = "pipeline-v1"
+
+
 
             logger.info(
                 f"AI results stored "
@@ -178,16 +196,54 @@ def process_message(message_data, delivery_count=0):
                 f"{results}"
             )
 
+            processing_time = time.time() - start_time
+
             # -------------------------------------------------
             # COMPLETE JOB
             # -------------------------------------------------
 
             job.status = "COMPLETED"
+            
+            
+
+
 
             job.completed_at = datetime.utcnow()
 
             job.retry_count = 0
             job.error_message = None
+
+            
+            metric = QueueMetrics(
+
+                job_id=job.id,
+                worker_name="worker-1",
+                processing_time=processing_time,
+                retry_count=job.retry_count,
+                queue_wait_time=(
+                    datetime.utcnow() -
+                    job.created_at
+                ).total_seconds(),
+
+
+                status="COMPLETED"
+            )
+            db.session.add(metric)
+
+            
+
+
+
+            usage = AIUsage(
+
+                job_id=job.id,
+                model_name="gpt-4o-mini",
+                tokens_used=1200,
+                estimated_cost=0.024,
+                processing_time=processing_time
+            )
+
+            db.session.add(usage)
 
             db.session.commit()
 
@@ -277,128 +333,149 @@ def process_message(message_data, delivery_count=0):
 def listen_to_queue():
 
     logger.info(
-        "Initializing Azure Service Bus client"
+        "Worker queue listener started"
     )
 
-    client = (
-        ServiceBusClient.from_connection_string(
-            conn_str=CONNECTION_STRING
-        )
-    )
+    while True:
 
-    with client:
-
-        receiver = client.get_queue_receiver(
-            queue_name=QUEUE_NAME,
-            max_wait_time=5
-        )
-
-        logger.info(
-            f"Listening to queue: {QUEUE_NAME}"
-        )
-
-        with receiver:
+        try:
 
             logger.info(
-                "Listening for messages..."
+                "Connecting to Azure Service Bus..."
             )
 
-            while True:
-                logger.info("Worker heartbeat active")
+            client = (
+                ServiceBusClient.from_connection_string(
+                    conn_str=CONNECTION_STRING
+                )
+            )
 
-                messages = receiver.receive_messages(
-                    max_message_count=1,
+            with client:
+
+                receiver = client.get_queue_receiver(
+                    queue_name=QUEUE_NAME,
                     max_wait_time=5
                 )
 
-                if not messages:
-                    continue
+                logger.info(
+                    f"Connected to queue: {QUEUE_NAME}"
+                )
 
-                for message in messages:
+                with receiver:
 
-                    try:
+                    logger.info(
+                        "Listening for messages..."
+                    )
 
-                        logger.info(
-                            "New message received "
-                            "from queue"
-                        )
+                    while True:
 
-                        # ---------------------------------
-                        # PARSE MESSAGE
-                        # ---------------------------------
+                        try:
 
-                        body = b"".join(
-                            [b for b in message.body]
-                        ).decode("utf-8")
-
-                        data = json.loads(body)
-
-                        logger.info(
-                            f"Received job message "
-                            f"for job {data['job_id']}"
-                        )
-
-                        # ---------------------------------
-                        # PROCESS MESSAGE
-                        # ---------------------------------
-
-                        process_message(
-                            data,
-                            delivery_count=
-                            message.delivery_count
-                        )
-
-                        # ---------------------------------
-                        # COMPLETE MESSAGE
-                        # ---------------------------------
-
-                        receiver.complete_message(
-                            message
-                        )
-
-                        logger.info(
-                            f"Queue message completed "
-                            f"for job {data['job_id']}"
-                        )
-
-                       
-
-
-                    except Exception as error:
-
-                        logger.exception(
-                            f"Queue processing failed: "
-                            f"{str(error)}"
-                        )
-
-                        # ---------------------------------
-                        # DEAD LETTER LOGIC
-                        # ---------------------------------
-
-                        if message.delivery_count >= 3:
-
-                            receiver.dead_letter_message(
-                                message,
-                                reason="ProcessingFailed",
-                                error_description=
-                                str(error)
+                            messages = (
+                                receiver.receive_messages(
+                                    max_message_count=1,
+                                    max_wait_time=5
+                                )
                             )
 
-                            logger.warning(
-                                "Message moved to "
-                                "dead letter queue"
+                            if not messages:
+                                continue
+
+                            for message in messages:
+
+                                try:
+
+                                    logger.info(
+                                        "New message received"
+                                    )
+
+                                    body = b"".join(
+                                        [b for b in message.body]
+                                    ).decode("utf-8")
+
+                                    data = json.loads(body)
+
+                                    process_message(
+                                        data,
+                                        delivery_count=
+                                        message.delivery_count
+                                    )
+
+                                    receiver.complete_message(
+                                        message
+                                    )
+
+                                    logger.info(
+                                        f"Message completed "
+                                        f"for job "
+                                        f"{data['job_id']}"
+                                    )
+
+                                except Exception as error:
+
+                                    logger.exception(
+                                        f"Message processing failed: "
+                                        f"{str(error)}"
+                                    )
+
+                                    if (
+                                        message.delivery_count >= 3
+                                    ):
+
+                                        receiver.dead_letter_message(
+                                            message,
+                                            reason=
+                                            "ProcessingFailed",
+                                            error_description=
+                                            str(error)
+                                        )
+
+                                        logger.warning(
+                                            "Message moved "
+                                            "to DLQ"
+                                        )
+
+                                    else:
+
+                                        receiver.abandon_message(
+                                            message
+                                        )
+
+                                        logger.warning(
+                                            "Message returned "
+                                            "to queue"
+                                        )
+
+                        except Exception as receiver_error:
+
+                            logger.exception(
+                                f"Receiver loop failed: "
+                                f"{str(receiver_error)}"
                             )
 
-                        else:
-
-                            receiver.abandon_message(
-                                message
+                            logger.info(
+                                "Reconnecting receiver "
+                                "in 5 seconds..."
                             )
 
-                            logger.warning(
-                                "Message abandoned "
-                                "back to queue"
-                            )
+                            time.sleep(5)
+
+                            break
+
+        except Exception as connection_error:
+
+            logger.exception(
+                f"Service Bus connection failed: "
+                f"{str(connection_error)}"
+            )
+
+            logger.info(
+                "Retrying Service Bus connection "
+                "in 10 seconds..."
+            )
+
+            time.sleep(10)
+
 
 
 # =========================================================
