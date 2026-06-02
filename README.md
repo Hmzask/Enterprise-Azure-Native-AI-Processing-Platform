@@ -1,764 +1,808 @@
-# Enterprise Azure-Native AI Processing Platform
+# Enterprise Azure Native AI Processing Platform
 
-<div align="center">
+## Project Overview
 
-![Enterprise AI Platform](https://img.shields.io/badge/Enterprise-AI%20Platform-blue?style=flat-square&logo=microsoft-azure)
-![Python](https://img.shields.io/badge/Python-3.9+-green?style=flat-square&logo=python)
-![React](https://img.shields.io/badge/React-18+-blue?style=flat-square&logo=react)
-![Docker](https://img.shields.io/badge/Docker-Compose-blue?style=flat-square&logo=docker)
-![Azure](https://img.shields.io/badge/Cloud-Microsoft%20Azure-0078D4?style=flat-square&logo=microsoft-azure)
-![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)
+The **Enterprise Azure Native AI Processing Platform** is a sophisticated, cloud-native, microservices-based solution designed for enterprise organizations to intelligently process, analyze, and summarize diverse document types (PDFs, images, audio files) using advanced artificial intelligence capabilities. Built entirely on **Microsoft Azure** cloud infrastructure with **Azure Entra ID** authentication and authorization, this platform leverages cutting-edge AI services to extract, understand, and synthesize information from unstructured data at scale.
 
-A production-grade, cloud-native AI processing platform built on Microsoft Azure, designed to intelligently process and analyze diverse media types including PDFs, images, and audio files using advanced machine learning and cognitive services.
+### Project Purpose
 
-[Features](#-features) • [Architecture](#-system-architecture) • [Getting Started](#-getting-started) • [API Documentation](#-api-endpoints) • [Contributing](#-contributing)
+Organizations today struggle with information overload—mountains of documents, images, and audio files that contain valuable insights but are too time-consuming to process manually. This platform solves that problem by:
 
-</div>
+- **Automating multi-format document processing** - Simultaneously handle PDFs, images, and audio files through intelligent format detection
+- **Extracting actionable intelligence** - Use Azure Cognitive Services for OCR, speech-to-text transcription, and content extraction
+- **Generating executive summaries** - Leverage Azure OpenAI to produce concise, contextually-relevant summaries of processed content
+- **Ensuring enterprise-grade security** - Integrate Azure Entra ID for single sign-on, Azure Key Vault for secrets management, and Azure SQL for audit logging
+- **Scaling asynchronously** - Process jobs without blocking user interactions through Azure Service Bus queue-based architecture
+- **Maintaining audit compliance** - Track all operations, user actions, and data access for regulatory compliance and security investigations
 
----
+### Key Use Cases
 
-## 📋 Table of Contents
-
-- [Overview](#-overview)
-- [Features](#-features)
-- [System Architecture](#-system-architecture)
-- [Technical Stack](#-technical-stack)
-- [Prerequisites](#-prerequisites)
-- [Getting Started](#-getting-started)
-- [API Endpoints](#-api-endpoints)
-- [Project Structure](#-project-structure)
-- [Configuration](#-configuration)
-- [Development](#-development)
-- [Contributing](#-contributing)
-- [License](#-license)
+- **Document Processing Pipelines**: Automate bulk processing of contracts, invoices, reports, and applications
+- **Knowledge Management**: Extract and catalog insights from company archives, training materials, and institutional documents
+- **Compliance & Audit**: Maintain detailed audit trails of all processed documents and user actions for regulatory requirements
+- **Content Intelligence**: Generate automated summaries for executive dashboards and reporting systems
+- **Multi-media Analysis**: Process diverse content types (written, visual, audio) in a single unified platform
 
 ---
 
-## 🎯 Overview
+## Technology Stack
 
-The **Enterprise Azure-Native AI Processing Platform** is a sophisticated, containerized solution designed for enterprises that need to process, analyze, and extract insights from unstructured data at scale. By leveraging Microsoft Azure's cognitive services and OpenAI's GPT models, the platform provides:
+### Cloud Platform & Identity
+- **Azure Cloud**: Entire platform runs on Microsoft Azure cloud infrastructure
+- **Azure Entra ID**: Enterprise identity provider for SSO, user management, and role-based access control
+- **Azure Key Vault**: Centralized secrets management (API keys, connection strings, certificates)
+- **Azure SQL Database**: Relational database for persistent job tracking and audit logs
 
-- **Automated Document Processing**: Extract text and data from PDFs, images, and audio files
-- **Intelligent Summarization**: Generate concise summaries of extracted content using advanced NLP
-- **Scalable Architecture**: Asynchronous job processing with robust error handling and retry mechanisms
-- **Enterprise Security**: Integration with Azure Key Vault for credential management
-- **Cloud-Native Design**: Built for Azure with complete containerization and orchestration support
+### AI & Cognitive Services
+- **Azure Cognitive Services - Vision**: OCR (Optical Character Recognition) for extracting text from images and PDFs
+- **Azure Cognitive Services - Speech**: Speech-to-text transcription for audio file processing
+- **Azure OpenAI (Foundry)**: GPT-based models for intelligent text summarization and content analysis
+- **Azure Applied AI**: Advanced document understanding and entity extraction
 
-### Key Benefits
+### Data & Storage
+- **Azure Blob Storage**: Scalable object storage for uploaded documents and processed files
+- **Azure Service Bus**: Message queue for asynchronous job processing and worker coordination
+- **Azure SQL Database**: Transactional database with retry logic and job status tracking
 
-✅ **Fully Automated** - End-to-end processing pipeline with minimal manual intervention  
-✅ **Highly Available** - Distributed microservices architecture with health monitoring  
-✅ **Enterprise-Ready** - Security-first approach with Azure Key Vault integration  
-✅ **Scalable** - Handle multiple processing requests concurrently with queue-based architecture  
-✅ **Intelligent** - AI-powered text extraction and summarization powered by Azure AI and OpenAI  
+### Application Architecture
+- **Python Flask**: Backend microservices for API and frontend web application
+- **Docker & Docker Compose**: Containerized deployment with orchestrated microservices
+- **Nginx**: Reverse proxy and load balancer for routing and SSL termination
+- **Gunicorn**: WSGI HTTP server for Flask applications
 
----
-
-## ⚡ Features
-
-### Core Capabilities
-
-| Feature | Description | Technology |
-|---------|-------------|-----------|
-| **PDF Processing** | Extract text and data from PDF documents with high accuracy | PyMuPDF (fitz) |
-| **Image OCR** | Optical Character Recognition for images and scanned documents | Azure Computer Vision API |
-| **Audio Transcription** | Convert audio files to text with automatic format conversion | Azure Speech Services |
-| **Text Summarization** | Generate intelligent summaries of extracted content | OpenAI GPT Models |
-| **Async Job Processing** | Handle multiple jobs concurrently with queue-based architecture | Azure Service Bus |
-| **Error Handling** | Robust retry logic with exponential backoff and dead-letter queue handling | Azure Service Bus |
-| **Secure Storage** | Store documents and results in cloud storage with encryption | Azure Blob Storage |
-| **Credential Management** | Centralized secret and credential management | Azure Key Vault |
-
-### Enterprise Features
-
-- 🔐 **Zero-Trust Security**: Credential-less authentication using Managed Identity
-- 📊 **Job Tracking**: Real-time job status monitoring and result retrieval
-- 🔄 **Automatic Retries**: Intelligent retry mechanism for failed operations
-- 📈 **Scalability**: Horizontal scaling through containerized microservices
-- 🌐 **Multi-Region Support**: Ready for deployment across Azure regions
-- 📝 **Comprehensive Logging**: Structured logging for audit and debugging
-- ⚡ **High Performance**: Optimized for low-latency processing
+### Development & DevOps
+- **Python 3.9+**: Primary development language
+- **Git**: Version control system
+- **Docker**: Container platform for consistent deployment
+- **Azure CLI**: Command-line interface for Azure resource management
 
 ---
 
-## 🏗️ System Architecture
-
-### Architecture Diagram
+## Project Structure
 
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│                         ENTERPRISE NETWORK                           │
-│                                                                      │
-│  ┌─────────────────────────────────────────────────────────────┐   │
-│  │                   NGINX REVERSE PROXY (Port 8080)           │   │
-│  │              Load Balancing & Request Routing               │   │
-│  └──────────────────┬──────────────────┬──────────────────────┘   │
-│                     │                  │                           │
-│         ┌───────────┴────────┐    ┌────┴──────────────┐          │
-│         ▼                    ▼    ▼                   ▼           │
-│  ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐  │
-│  │   FRONTEND       │ │   API SERVICE    │ │  WORKER SERVICE  │  │
-│  │   (React)        │ │   (Flask)        │ │  (Job Processor) │  │
-│  │  Port: 3000      │ │   Port: 5000     │ │ Async Queue Cons │  │
-│  │                  │ │                  │ │                  │  │
-│  │ • Job Upload     │ │ • Job Submit API │ │ • File Download  │  │
-│  │ • Status Display │ │ • Status Check   │ │ • AI Processing  │  │
-│  │ • Result View    │ │ • Result Fetch   │ │ • Data Persist   │  │
-│  └──────────────────┘ └────────┬─────────┘ └────────┬─────────┘  │
-│                                 │                    │             │
-│         ┌───────────────────────┴────────┬───────────┴────────┐   │
-│         │                                │                    │   │
-└─────────┼────────────────────────────────┼────────────────────┼───┘
-          │                                │                    │
-    ┌─────▼─────┐                  ┌──────▼──────────┐   ┌──────▼─────────┐
-    │  DATABASE │                  │  SERVICE BUS    │   │  BLOB STORAGE  │
-    │  (SQL)    │◄─────────────────┤  (Message Queue)│   │  (Files)       │
-    │           │                  │                 │   │                │
-    └───────────┘                  └─────────────────┘   └────────────────┘
-                                          ▲
-    ┌────────────────────────────────────┘│┌─────────────────────────┐
-    │                                      ││  AZURE COGNITIVE SVCS  │
-    │            AZURE SERVICES            ││                        │
-    │                                      ││ • Vision API (OCR)     │
-    ├──────────────────────────────────────┤│ • Speech Services      │
-    │                                      ││ • Key Vault            │
-    │ • Container Registry                 │└─────────────────────────┘
-    │ • Managed Identity                   │
-    │ • Monitor & Alerts                   │  ┌──────────────────────┐
-    │ • Service Principal Auth             │  │  OPENAI (GPT API)    │
-    │                                      │  │                      │
-    │                                      │  │ • Text Summarization │
-    │                                      │  │ • Content Generation │
-    │                                      │  └──────────────────────┘
-    └──────────────────────────────────────┘
+ENTERPRISE-AI-PLATFORM/
+│
+├── README.md                          # Project documentation (this file)
+├── docker-compose.yml                 # Microservices orchestration
+├── .gitignore                         # Git ignore rules
+│
+├── frontend/                          # Web application (Port 3000)
+│   ├── app.py                         # Flask application entry point
+│   ├── requirements.txt               # Python dependencies
+│   ├── Dockerfile                     # Container configuration
+│   ├── templates/                     # HTML templates
+│   │   ├── base.html                  # Base template with navigation
+│   │   ├── login.html                 # Entra ID login page
+│   │   ├── dashboard.html             # Main dashboard with job overview
+│   │   ├── upload.html                # File upload interface
+│   │   ├── jobs.html                  # Job status tracking
+│   │   ├── results.html               # Processed results display
+│   │   ├── admin.html                 # Admin panel for system management
+│   │   └── audit_logs.html            # Audit log viewer for compliance
+│   └── static/                        # CSS, JavaScript, images
+│
+├── api_service/                       # REST API Backend (Port 5000)
+│   ├── app.py                         # API entry point
+│   ├── requirements.txt               # Dependencies
+│   ├── Dockerfile                     # Container configuration
+│   ├── routes/                        # API route definitions
+│   │   ├── auth.py                    # Authentication endpoints
+│   │   ├── jobs.py                    # Job submission endpoints
+│   │   └── results.py                 # Results retrieval endpoints
+│   └── middleware/                    # Authentication & validation
+│
+├── worker_service/                    # Async Job Processing Service
+│   ├── requirements.txt               # Python dependencies (Azure SDKs)
+│   ├── Dockerfile                     # Container configuration
+│   │
+│   ├── workers/
+│   │   ├── queue_listener.py          # Main entry point - listens to Service Bus
+│   │   ├── models.py                  # Job database model
+│   │   └── job_processor.py           # Job processing coordination
+│   │
+│   ├── ai/
+│   │   ├── ai_orchestrator.py         # Routes jobs to appropriate AI service
+│   │   ├── pdf_extractor.py           # PDF text extraction
+│   │   ├── image_processor.py         # Image OCR and analysis
+│   │   └── audio_processor.py         # Audio transcription
+│   │
+│   ├── azure_clients/
+│   │   ├── blob_client.py             # Azure Blob Storage integration
+│   │   ├── service_bus_client.py      # Azure Service Bus queue operations
+│   │   ├── sql_client.py              # Azure SQL Database connection
+│   │   ├── keyvault_client.py         # Azure Key Vault secret retrieval
+│   │   ├── vision_client.py           # Azure Computer Vision (OCR)
+│   │   ├── speech_client.py           # Azure Speech Services
+│   │   └── foundry_client.py          # Azure OpenAI Foundry (Summarization)
+│   │
+│   └── config/
+│       ├── settings.py                # Configuration management
+│       └── logging.py                 # Logging setup
+│
+├── nginx/                             # Reverse Proxy (Port 8080)
+│   ├── Dockerfile                     # Container configuration
+│   └── nginx.conf                     # Route configuration
+│
+├── migrations/                        # Database migrations
+│   └── *.sql                          # Schema setup scripts
+│
+└── temp_processing/                   # Temporary file storage (local)
+    └── (Runtime storage for processing)
 ```
 
-### Data Flow
+### Component Responsibilities
 
-```
-1. FILE UPLOAD
-   User → Frontend → API Service → Azure Blob Storage
-                  ↓
-              Create Job Record in DB
-
-2. ASYNC PROCESSING
-   API Service → Service Bus Queue → Worker Service
-                                   ↓
-                          Download from Blob Storage
-                                   ↓
-                          AI Orchestration:
-                          • PDF Extraction
-                          • Image OCR
-                          • Audio Transcription
-                                   ↓
-                          OpenAI Summarization
-                                   ↓
-                          Store Results in DB
-
-3. RESULT RETRIEVAL
-   Frontend → API Service → Database → Client
-```
+| Component | Purpose | Technology | Port |
+|-----------|---------|-----------|------|
+| **Nginx** | Entry point, routing, reverse proxy, SSL termination | Nginx | 8080 |
+| **Frontend** | Web UI, user interactions, job submission | Python Flask | 3000 |
+| **API Service** | Business logic, job orchestration, authentication | Python Flask | 5000 |
+| **Worker Service** | Asynchronous job processing, AI orchestration | Python (headless) | None |
+| **Azure Services** | AI, storage, identity, secrets, database | Azure SDKs | Cloud |
 
 ---
 
-## 🛠️ Technical Stack
+## API Endpoints
 
-### Backend Services
+### Frontend Routes (Web Application - Port 3000)
 
-| Component | Technology | Version | Purpose |
-|-----------|-----------|---------|---------|
-| API Framework | Flask | 3.1.3 | RESTful API server |
-| ORM | SQLAlchemy | 2.0.49 | Database abstraction |
-| Task Queue | Azure Service Bus | 7.14.3 | Async job processing |
-| Web Server | Werkzeug | 3.1.8 | WSGI server |
+| HTTP Method | Endpoint | Purpose | Authentication | Response |
+|-------------|----------|---------|-----------------|----------|
+| `GET` | `/` | Redirect to login or dashboard | Entra ID | Redirect to `/login` or `/dashboard` |
+| `GET` | `/login` | Entra ID authentication page | Entra ID OAuth | HTML login page |
+| `POST` | `/login/callback` | Handle Entra ID token callback | Entra ID | Session established, redirect to `/dashboard` |
+| `GET` | `/logout` | Logout and clear session | Entra ID | Redirect to login page |
+| `GET` | `/dashboard` | Main dashboard with job summary | Entra ID | HTML dashboard with job statistics |
+| `GET` | `/upload` | File upload page | Entra ID | HTML upload form |
+| `POST` | `/upload` | Submit file for processing | Entra ID JWT | JSON: `{job_id, status}` |
+| `GET` | `/jobs` | List all user's jobs | Entra ID JWT | HTML jobs page or JSON job list |
+| `GET` | `/jobs/<job_id>` | Job status and details | Entra ID JWT | JSON: `{job_id, status, progress, created_at}` |
+| `GET` | `/results` | All results page | Entra ID JWT | HTML results page with table |
+| `GET` | `/results/<job_id>` | Specific job results | Entra ID JWT | JSON: `{job_id, summary, extracted_text, status}` |
+| `GET` | `/admin` | Admin panel | Entra ID + Admin Role | HTML admin dashboard |
+| `POST` | `/admin/clear-queue` | Clear Service Bus queue | Entra ID + Admin Role | JSON: `{message: "Queue cleared"}` |
+| `GET` | `/audit-logs` | Audit log viewer | Entra ID + Admin/Auditor Role | HTML audit log table |
+| `GET` | `/audit-logs/export` | Export audit logs (CSV/JSON) | Entra ID + Admin/Auditor Role | CSV or JSON file download |
 
-### Azure Services
+### API Service Routes (REST API - Port 5000)
 
-| Service | Package | Version | Use Case |
-|---------|---------|---------|----------|
-| Blob Storage | azure-storage-blob | 12.29.0 | File storage & retrieval |
-| Service Bus | azure-servicebus | 7.14.3 | Message queue & job distribution |
-| Cognitive Services | azure-cognitiveservices-speech | 1.50.0 | Audio transcription |
-| Vision API | azure-ai-vision-imageanalysis | 1.0.0 | Image OCR & text extraction |
-| Key Vault | azure-identity | 1.25.3 | Secret & credential management |
+| HTTP Method | Endpoint | Purpose | Authentication | Request Body | Response |
+|-------------|----------|---------|-----------------|--------------|----------|
+| `POST` | `/api/auth/token` | Obtain JWT token | Entra ID Bearer Token | `{entra_id_token}` | JSON: `{access_token, token_type, expires_in}` |
+| `POST` | `/api/jobs/submit` | Submit document for processing | JWT Bearer Token | `{file_id, file_type, priority}` | JSON: `{job_id, status, queue_position}` |
+| `GET` | `/api/jobs/<job_id>` | Get job status | JWT Bearer Token | None | JSON: `{job_id, status, progress, error_message}` |
+| `GET` | `/api/jobs/user/<user_id>` | List user's jobs | JWT Bearer Token | None | JSON Array: `[{job_id, status, created_at}...]` |
+| `DELETE` | `/api/jobs/<job_id>` | Cancel job | JWT Bearer Token | None | JSON: `{message: "Job cancelled"}` |
+| `GET` | `/api/results/<job_id>` | Get job results | JWT Bearer Token | None | JSON: `{job_id, summary, extracted_text, metadata}` |
+| `POST` | `/api/results/<job_id>/download` | Download results file | JWT Bearer Token | None | Binary file (PDF/JSON/TXT) |
+| `POST` | `/api/auth/refresh` | Refresh JWT token | JWT Bearer Token (expired) | None | JSON: `{access_token, expires_in}` |
+| `GET` | `/api/health` | Service health check | None (public) | None | JSON: `{status: "healthy", version}` |
+| `POST` | `/api/admin/users` | Create/manage users (Admin) | JWT + Admin Role | `{username, email, role}` | JSON: User object |
+| `GET` | `/api/admin/stats` | System statistics | JWT + Admin Role | None | JSON: `{total_jobs, processed_today, avg_processing_time}` |
 
-### AI & Processing
+### Worker Service (Internal - No Direct HTTP Access)
 
-| Component | Package | Version | Function |
-|-----------|---------|---------|----------|
-| LLM | openai | 2.38.0 | Text summarization & generation |
-| PDF Processing | PyMuPDF | 1.27.2.3 | PDF text extraction |
-| File Conversion | ffmpeg | Latest | Audio format conversion |
-| Database | SQL Server | 2019+ | Data persistence |
+The Worker Service operates asynchronously and does not expose HTTP endpoints directly. Communication occurs through:
 
-### Infrastructure
-
-| Tool | Purpose |
-|------|---------|
-| Docker | Containerization |
-| Docker Compose | Local orchestration |
-| Nginx | Reverse proxy & load balancing |
-| Python | Runtime environment |
+| Communication Method | Source | Destination | Message Type | Purpose |
+|-------------------|--------|-------------|--------------|---------|
+| **Azure Service Bus Queue** | API Service | Worker Service | JSON Job Message | Job submission for processing |
+| **Azure Service Bus Queue** | Worker Service | API Service | JSON Status Update | Job completion/failure notification |
+| **Azure SQL** | Worker Service | Database | SQL Transactions | Job status updates, audit logging |
+| **Azure Blob Storage** | Worker Service | Storage | File Operations | Upload results, retrieve input files |
+| **Azure Key Vault** | Worker Service | Secrets Store | API Calls | Retrieve connection strings and API keys |
 
 ---
 
-## 📦 Prerequisites
+## Azure Services Architecture
 
-### System Requirements
+### 1. **Azure Entra ID (Identity Provider)**
 
-- **OS**: Linux, macOS, or Windows (with WSL2)
-- **Docker**: Version 20.10+
-- **Docker Compose**: Version 1.29+
-- **Python**: 3.9+ (for local development)
-- **Git**: Latest version
+**Purpose**: Single Sign-On (SSO) and centralized identity management
 
-### Cloud Requirements
+**Integration Points**:
+- Frontend login redirects users to Entra ID authentication endpoint
+- Users authenticate with corporate credentials
+- Platform receives JWT tokens with user information and role claims
+- Role-based access control (RBAC) enforced for Admin/Auditor functions
 
-- **Azure Account** with the following services:
-  - Azure SQL Database
-  - Azure Blob Storage
-  - Azure Service Bus
-  - Azure Cognitive Services (Vision, Speech)
-  - Azure Key Vault
-  - Azure Container Registry (optional, for production)
+**Security Benefits**:
+- No password storage in application (delegated to Azure Entra ID)
+- Multi-factor authentication (MFA) support
+- Conditional access policies
+- Real-time identity verification
 
-### API Keys & Credentials
+### 2. **Azure Blob Storage**
 
-You'll need the following credentials configured in `.env`:
+**Purpose**: Scalable, secure file storage for uploads and processed documents
 
+**Data Flow**:
 ```
-# Azure SQL
-AZURE_SQL_SERVER=
-AZURE_SQL_DATABASE=
-AZURE_SQL_USER=
-AZURE_SQL_PASSWORD=
+User Upload → Frontend → API Service → Blob Storage
+Blob Storage → Worker Service → Process → Blob Storage (Results)
+Blob Storage → Frontend/API → User Download
+```
 
-# Azure Storage
-AZURE_STORAGE_ACCOUNT_NAME=
-AZURE_STORAGE_ACCOUNT_KEY=
+**Security Implementation**:
+- Connection strings stored in Azure Key Vault (not in code/env files)
+- SAS tokens for time-limited access
+- Encryption at rest (Azure-managed keys or CMK)
+- Network isolation via private endpoints (optional)
+
+**File Organization**:
+- `/uploads/{user_id}/{timestamp}/{filename}` - Input files
+- `/results/{job_id}/{result_type}.json` - Processed results
+- `/temp/{job_id}/` - Temporary processing files (auto-cleanup)
+
+### 3. **Azure Service Bus**
+
+**Purpose**: Asynchronous job queue and inter-service messaging
+
+**Architecture**:
+```
+API Service (Producer) → Service Bus Queue → Worker Service (Consumer)
+```
+
+**Job Flow**:
+1. User submits file via `/upload` endpoint
+2. API Service creates Job record and enqueues message to Service Bus
+3. Response returned immediately (job_id) to user
+4. Worker Service continuously listens to queue
+5. Worker processes job and updates status
+6. User polls `/jobs/<job_id>` to check status
+
+**Message Format**:
+```json
+{
+  "job_id": "uuid",
+  "user_id": "entra-id-oid",
+  "file_url": "https://blob.azure.com/uploads/...",
+  "file_type": "pdf|image|audio",
+  "priority": "normal|high",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+**Retry Logic**:
+- Dead letter queue for permanently failed jobs
+- Worker retries 3 times on transient failures
+- Exponential backoff between retries
+- Failed jobs logged to audit trail
+
+### 4. **Azure SQL Database**
+
+**Purpose**: Persistent data storage with transactional consistency
+
+**Schema Overview**:
+```sql
+-- Jobs table
+Jobs (
+  job_id: UUID PRIMARY KEY,
+  user_id: NVARCHAR(255),
+  file_path: NVARCHAR(512),
+  status: NVARCHAR(50), -- PENDING, PROCESSING, SUCCESS, FAILED
+  created_at: DATETIME,
+  updated_at: DATETIME,
+  retry_count: INT,
+  error_message: NVARCHAR(1024)
+)
+
+-- Audit logs table
+AuditLogs (
+  log_id: BIGINT PRIMARY KEY IDENTITY,
+  user_id: NVARCHAR(255),
+  action: NVARCHAR(100),
+  resource_type: NVARCHAR(50),
+  resource_id: NVARCHAR(255),
+  timestamp: DATETIME,
+  ip_address: NVARCHAR(50),
+  details: NVARCHAR(MAX)
+)
+
+-- Results table
+Results (
+  result_id: UUID PRIMARY KEY,
+  job_id: UUID FOREIGN KEY,
+  summary: NVARCHAR(MAX),
+  extracted_text: NVARCHAR(MAX),
+  metadata: NVARCHAR(MAX) -- JSON
+)
+```
+
+**Transactional Integrity**:
+- Job status updates wrapped in transactions
+- Audit logging within same transaction for consistency
+- Connection pooling for performance
+- Retry logic for transient SQL errors
+
+### 5. **Azure Key Vault**
+
+**Purpose**: Centralized secrets management
+
+**Secrets Stored**:
+- Azure Blob Storage connection string
+- Azure Service Bus connection string
+- Azure SQL Database connection string
+- Azure OpenAI API key
+- Azure Cognitive Services API keys
+- SSL certificates for HTTPS
+
+**Access Pattern**:
+```
+Application → Managed Identity (MSI) → Azure Key Vault
+                        ↓
+          Authenticate via Azure Entra ID
+                        ↓
+           Retrieve secrets securely
+```
+
+**Benefits**:
+- No secrets in `.env`, code, or Docker images
+- Audit trail of secret access
+- Automatic secret rotation support
+- Role-based access to secrets (principle of least privilege)
+
+### 6. **Azure Cognitive Services**
+
+#### **Computer Vision (OCR)**
+- **Use Case**: Extract text from image files and PDFs
+- **API**: `analyze_image()` with OCR capability
+- **Output**: Structured text with location data
+
+#### **Speech Services**
+- **Use Case**: Transcribe audio files to text
+- **API**: Speech-to-text with language detection
+- **Output**: Transcript text with confidence scores
+
+### 7. **Azure OpenAI (Foundry Model)**
+
+**Purpose**: Intelligent text summarization
+
+**Configuration**:
+- Model: GPT-4 or GPT-3.5-Turbo (configurable)
+- Temperature: 0.3 (low randomness for consistent output)
+- Max Tokens: 300 (enterprise-appropriate summary length)
+- System Prompt: Customizable for domain-specific summaries
+
+**Usage**:
+```python
+SUMMARIZATION_PROMPT = """
+You are an enterprise document analyst. Summarize the following document 
+in clear, concise bullet points suitable for executive review. 
+Focus on key decisions, risks, and actionable items.
+"""
+```
+
+**Deployment Strategy**:
+- Multiple model deployments for redundancy
+- Fallback to alternative deployment on timeout
+- Request throttling to manage quota limits
+
+---
+
+## Security & Privacy Architecture
+
+### Authentication & Authorization
+
+**Entra ID Integration**:
+- Users authenticate via Entra ID (SSO)
+- JWT tokens issued with user ID, email, and role claims
+- Session tokens stored in secure HTTP-only cookies
+- Token expiration and refresh logic implemented
+- Logout clears both browser and backend sessions
+
+**RBAC (Role-Based Access Control)**:
+```
+User Roles:
+├── End User (default)
+│   ├── Upload documents
+│   ├── View own results
+│   └── View own job history
+├── Admin
+│   ├── All user permissions
+│   ├── System management
+│   ├── Queue management
+│   └── User administration
+└── Auditor
+    ├── View audit logs
+    ├── Export compliance reports
+    └── No modification privileges
+```
+
+### Data Protection
+
+**Encryption in Transit**:
+- HTTPS/TLS 1.2+ for all communications
+- Service-to-service communication via private network
+- Azure managed SSL certificates
+
+**Encryption at Rest**:
+- Azure Blob Storage: Microsoft-managed or customer-managed keys
+- Azure SQL Database: Transparent Data Encryption (TDE)
+- Azure Key Vault: HSM-backed encryption
+- Temporary files: Encrypted with auto-deletion
+
+**Data Minimization**:
+- Upload only what's necessary
+- Automatic cleanup of temporary files after processing
+- Results retention policy (configurable, default 90 days)
+- User data deletion on account termination
+
+### Audit & Compliance
+
+**Comprehensive Audit Logging**:
+```
+Audited Events:
+- User login/logout (timestamp, IP, status)
+- Document uploads (user, file size, file type, hash)
+- Processing completion (job status, duration)
+- Result access (user, job_id, timestamp)
+- Administrative actions (user, action, target)
+- Errors & retries (job_id, error details, retry count)
+```
+
+**Compliance Features**:
+- Immutable audit logs (write-once)
+- Audit log export (CSV, JSON) for compliance reviews
+- Data residency enforcement (Azure region selection)
+- Right-to-deletion support (GDPR compliance)
+- Data export functionality (user data portability)
+
+### API Security
+
+**Request Validation**:
+- Input sanitization (prevent injection attacks)
+- File type validation (whitelist: PDF, PNG, JPG, MP3, WAV)
+- File size limits (max 100 MB per document)
+- Rate limiting (prevent brute force/DoS)
+
+**Error Handling**:
+- Generic error messages to users (no stack traces)
+- Detailed error logging internally (for debugging)
+- Sensitive data scrubbing from logs
+- Proper HTTP status codes (400, 401, 403, 500)
+
+### Infrastructure Security
+
+**Network Isolation**:
+- Azure Virtual Network (VNet) for service isolation
+- Private endpoints for Azure services (optional)
+- Network Security Groups (NSGs) for ingress/egress rules
+- DDoS protection via Azure DDoS Protection service
+
+**Container Security**:
+- Docker images scanned for vulnerabilities
+- Minimal base images (Alpine, Distroless where possible)
+- No hardcoded secrets in images
+- Runtime security monitoring via Azure Defender
+
+---
+
+## Deployment & Setup
+
+### Prerequisites
+
+- Microsoft Azure subscription with resource group
+- Azure Entra ID tenant configured with application registration
+- Docker and Docker Compose installed locally
+- Python 3.9+ (for local development)
+- Git for version control
+
+### Environment Configuration
+
+Create a `.env` file (never commit this to Git):
+
+```env
+# Azure Entra ID
+ENTRA_CLIENT_ID=your-app-registration-id
+ENTRA_TENANT_ID=your-tenant-id
+ENTRA_REDIRECT_URI=https://yourdomain.com/login/callback
+
+# Azure Key Vault
+KEYVAULT_URL=https://your-keyvault.vault.azure.net/
 
 # Azure Service Bus
-AZURE_SERVICE_BUS_CONNECTION_STRING=
-AZURE_SERVICE_BUS_QUEUE=
+SERVICE_BUS_NAMESPACE=your-namespace.servicebus.windows.net
+SERVICE_BUS_QUEUE_NAME=document-processing-queue
+
+# Azure SQL Database
+SQL_SERVER=your-server.database.windows.net
+SQL_DATABASE=enterprise_ai_db
+SQL_USERNAME=sqladmin
+
+# Azure Blob Storage
+BLOB_ACCOUNT_NAME=yourstorageaccount
+BLOB_CONTAINER_NAME=enterprise-ai-documents
 
 # Azure Cognitive Services
-AZURE_VISION_ENDPOINT=
-AZURE_VISION_KEY=
-AZURE_SPEECH_KEY=
-AZURE_SPEECH_REGION=
+VISION_ENDPOINT=https://your-region.api.cognitive.microsoft.com/
+VISION_API_KEY_VAULT_NAME=vision-api-key
 
-# OpenAI
-OPENAI_API_KEY=
+SPEECH_ENDPOINT=https://your-region.tts.speech.microsoft.com/
+SPEECH_API_KEY_VAULT_NAME=speech-api-key
+
+# Azure OpenAI
+OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
+OPENAI_API_VERSION=2024-02-01
+OPENAI_DEPLOYMENT_NAME=gpt-4-summary
+
+# Application Configuration
+APP_ENV=production
+LOG_LEVEL=INFO
+MAX_UPLOAD_SIZE_MB=100
+RESULT_RETENTION_DAYS=90
+SESSION_SECRET_KEY=your-secure-random-key
 ```
 
----
-
-## 🚀 Getting Started
-
-### 1. Clone the Repository
+### Local Development Setup
 
 ```bash
-git clone https://github.com/Hmzask/Enterprise-Azure-Native-AI-Processing-Platform.git
-cd Enterprise-Azure-Native-AI-Processing-Platform
-```
+# Clone repository
+git clone https://github.com/yourusername/enterprise-ai-platform.git
+cd enterprise-ai-platform
 
-### 2. Configure Environment Variables
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-```bash
-# Copy the environment template
+# Install dependencies
+pip install -r requirements-dev.txt
+
+# Copy .env.example to .env and configure
 cp .env.example .env
+# Edit .env with your Azure credentials
 
-# Edit with your Azure credentials and API keys
-nano .env
-```
+# Start services with Docker Compose
+docker-compose -f docker-compose.yml up -d
 
-### 3. Start the Platform
-
-```bash
-# Build and start all services
-docker-compose up -d --build
+# Check service health
+curl http://localhost:8080/api/health
 
 # View logs
 docker-compose logs -f
-
-# Check service health
-docker-compose ps
 ```
 
-### 4. Verify Deployment
+### Azure Cloud Deployment
 
 ```bash
-# API Service Health Check
-curl -X GET http://localhost:5000/health
+# 1. Create Azure resources
+az group create --name enterprise-ai-rg --location eastus
 
-# Frontend Access
-open http://localhost:3000
+# 2. Create container registry
+az acr create --resource-group enterprise-ai-rg \
+  --name youracr --sku Basic
 
-# Nginx Proxy
-open http://localhost:8080
-```
+# 3. Deploy to Azure Container Instances or AKS
+az container create --resource-group enterprise-ai-rg \
+  --file docker-compose.yml
 
-### 5. Test Processing
+# 4. Configure SSL certificate (via Azure Application Gateway)
+# Reference: Azure docs on SSL termination
 
-```bash
-# Upload a file for processing
-curl -X POST http://localhost:5000/api/jobs \
-  -F "file=@document.pdf" \
-  -F "file_type=pdf"
-
-# Check job status
-curl -X GET http://localhost:5000/api/jobs/{job_id}
-
-# Retrieve results
-curl -X GET http://localhost:5000/api/jobs/{job_id}/results
+# 5. Enable monitoring
+az monitor metrics list-definitions --resource-type Microsoft.Web/sites
 ```
 
 ---
 
-## 📡 API Endpoints
+## Workflow & Job Processing
 
-### Base URL
+### End-to-End Job Flow
 
 ```
-http://localhost:5000/api
+1. USER INTERACTION
+   User → Login (Entra ID) → Dashboard → Upload Document
+
+2. API PROCESSING
+   Frontend → POST /upload → API Service
+   API Service → Create Job Record → Queue Message → Azure Service Bus
+   API Service → Return Job ID to Frontend
+
+3. ASYNC PROCESSING (Worker Service)
+   Worker Listener → Poll Service Bus → Dequeue Message
+   Worker → Fetch File from Blob Storage
+   Worker → Detect File Type
+   Worker → Route to Appropriate AI Service
+   
+4. AI PROCESSING (Conditional)
+   IF PDF → PDFExtractor → Text Extraction
+   IF Image → Computer Vision (OCR) → Text Extraction
+   IF Audio → Speech Services → Transcription
+   
+5. SUMMARIZATION
+   Extracted Text → Azure OpenAI Foundry → Summary
+   
+6. STORAGE & NOTIFICATION
+   Worker → Save Results to Blob Storage
+   Worker → Update Job Status in SQL Database
+   Worker → Audit Log Entry
+   
+7. USER RESULT RETRIEVAL
+   User → Poll /jobs/<job_id> → View Status
+   Status COMPLETE → User → /results/<job_id> → View Summary
+   User → Optional: Download Full Report
 ```
 
-### Core Endpoints
+### Processing Status States
 
-#### Job Management
-
-| Method | Endpoint | Description | Request Body | Response |
-|--------|----------|-------------|--------------|----------|
-| **POST** | `/jobs` | Submit a new file for processing | `file` (multipart), `file_type` (pdf\|image\|audio) | `{ "job_id": "uuid", "status": "PENDING" }` |
-| **GET** | `/jobs/{job_id}` | Retrieve job details and current status | - | `{ "job_id": "uuid", "status": "PROCESSING", "created_at": "2024-01-01T00:00:00Z", "completed_at": null }` |
-| **GET** | `/jobs/{job_id}/results` | Fetch processing results | - | `{ "extracted_text": "...", "summary": "...", "job_id": "uuid" }` |
-| **GET** | `/jobs` | List all jobs with pagination | `?page=1&limit=20` | `{ "jobs": [...], "total": 150, "page": 1 }` |
-| **DELETE** | `/jobs/{job_id}` | Cancel and delete a job | - | `{ "status": "DELETED", "job_id": "uuid" }` |
-
-#### Health & Status
-
-| Method | Endpoint | Description | Response |
-|--------|----------|-------------|----------|
-| **GET** | `/health` | Service health check | `{ "status": "healthy", "timestamp": "2024-01-01T00:00:00Z" }` |
-| **GET** | `/status/workers` | Check worker service status | `{ "workers_active": 3, "jobs_processing": 5 }` |
-| **GET** | `/status/queue` | Check message queue status | `{ "messages_pending": 12, "dead_letters": 0 }` |
-
-### Request/Response Examples
-
-#### Submit a PDF for Processing
-
-```bash
-curl -X POST http://localhost:5000/api/jobs \
-  -H "Content-Type: multipart/form-data" \
-  -F "file=@financial_report.pdf" \
-  -F "file_type=pdf"
 ```
-
-**Response (201 Created):**
-```json
-{
-  "job_id": "550e8400-e29b-41d4-a716-446655440000",
-  "status": "PENDING",
-  "file_name": "financial_report.pdf",
-  "file_type": "pdf",
-  "created_at": "2024-01-15T10:30:45Z",
-  "estimated_wait_time": "30s"
-}
-```
-
-#### Check Job Status
-
-```bash
-curl -X GET http://localhost:5000/api/jobs/550e8400-e29b-41d4-a716-446655440000
-```
-
-**Response (200 OK):**
-```json
-{
-  "job_id": "550e8400-e29b-41d4-a716-446655440000",
-  "status": "COMPLETED",
-  "file_name": "financial_report.pdf",
-  "file_type": "pdf",
-  "created_at": "2024-01-15T10:30:45Z",
-  "completed_at": "2024-01-15T10:32:15Z",
-  "processing_time_seconds": 90
-}
-```
-
-#### Retrieve Processing Results
-
-```bash
-curl -X GET http://localhost:5000/api/jobs/550e8400-e29b-41d4-a716-446655440000/results
-```
-
-**Response (200 OK):**
-```json
-{
-  "job_id": "550e8400-e29b-41d4-a716-446655440000",
-  "status": "COMPLETED",
-  "ai_result": {
-    "extracted_text": "The financial performance of Q4 2023 shows...",
-    "summary": "Company achieved 15% revenue growth in Q4 2023, driven by increased market demand..."
-  },
-  "processing_metadata": {
-    "text_length": 5432,
-    "processing_duration_ms": 2145,
-    "worker_instance": "enterprise_worker_001"
-  }
-}
-```
-
-### Error Responses
-
-#### 400 Bad Request
-```json
-{
-  "error": "INVALID_REQUEST",
-  "message": "file_type must be one of: pdf, image, audio",
-  "timestamp": "2024-01-15T10:30:45Z"
-}
-```
-
-#### 404 Not Found
-```json
-{
-  "error": "JOB_NOT_FOUND",
-  "message": "Job with ID 550e8400-e29b-41d4-a716-446655440000 not found",
-  "timestamp": "2024-01-15T10:30:45Z"
-}
-```
-
-#### 500 Internal Server Error
-```json
-{
-  "error": "PROCESSING_FAILED",
-  "message": "An error occurred while processing the file",
-  "job_id": "550e8400-e29b-41d4-a716-446655440000",
-  "timestamp": "2024-01-15T10:30:45Z"
-}
+PENDING        → Job created, waiting in queue
+↓
+PROCESSING     → Actively being processed by worker
+↓
+SUCCESS        → Job completed, results available
+              OR
+FAILED         → Job failed after retries, error logged
+              OR
+CANCELLED      → User or admin cancelled job
 ```
 
 ---
 
-## 📂 Project Structure
+## Monitoring & Maintenance
 
+### Health Checks
+
+```bash
+# API Service health
+curl http://localhost:5000/api/health
+
+# Frontend service health  
+curl http://localhost:3000/health
+
+# Worker Service (check via logs)
+docker-compose logs worker_service | grep -i "listening\|health"
 ```
-Enterprise-Azure-Native-AI-Processing-Platform/
-├── README.md                          # Project documentation
-├── docker-compose.yml                 # Multi-container orchestration
-├── .env.example                       # Environment variables template
-├── .gitignore                         # Git ignore rules
-│
-├── api_service/                       # Flask API Server
-│   ├── Dockerfile                     # Container image definition
-│   ├── requirements.txt               # Python dependencies
-│   ├── main.py                        # Application entry point
-│   └── ...
-│
-├── worker_service/                    # Async Job Processor
-│   ├── Dockerfile                     # Container image definition
-│   ├── requirements.txt               # Python dependencies
-│   ├── main.py                        # Worker entry point
-│   ├── ai/                            # AI Processing modules
-│   │   ├── ai_orchestrator.py        # Main processing orchestrator
-│   │   ├── pdf_extractor.py          # PDF text extraction
-│   │   ├── image_ocr.py              # Image OCR service
-│   │   ├── speech_to_text.py         # Audio transcription
-│   │   └── summarizer.py             # Text summarization
-│   ├── azure_clients/                # Azure Service Clients
-│   │   ├── blob_client.py            # Blob Storage operations
-│   │   ├── sql_client.py             # SQL Database operations
-│   │   ├── keyvault_client.py        # Key Vault integration
-│   │   └── foundry_client.py         # OpenAI integration
-│   ├── workers/                      # Worker logic
-│   │   ├── queue_listener.py         # Service Bus queue listener
-│   │   ├── worker_db.py              # Database configuration
-│   │   └── models.py                 # Data models
-│   └── logger.py                      # Structured logging
-│
-├── frontend/                          # React Web Application
-│   ├── Dockerfile                     # Container image definition
-│   ├── package.json                   # Node dependencies
-│   ├── src/                           # React components & logic
-│   └── public/                        # Static assets
-│
-├── nginx/                             # Reverse Proxy Configuration
-│   ├── Dockerfile                     # Container image definition
-│   ├── nginx.conf                     # Nginx configuration
-│   └── ...
-│
-├── migrations/                        # Database Migrations
-│   ├── versions/                      # Migration scripts
-│   ├── env.py                         # Alembic configuration
-│   └── ...
-│
-└── temp_processing/                   # Temporary file storage
-    └── .gitkeep
-```
+
+### Logging
+
+All services log to:
+- **Console Output**: Real-time visibility via `docker-compose logs`
+- **Azure Monitor**: Centralized logging via Application Insights
+- **Database**: Audit events stored in SQL for compliance
+
+Log Levels:
+- `INFO`: Normal operation, job submissions/completions
+- `WARNING`: Transient failures, retries
+- `ERROR`: Permanent failures, configuration issues
+- `DEBUG`: Detailed processing steps (dev only)
+
+### Performance Optimization
+
+- **Queue Throughput**: Adjust worker concurrency in `docker-compose.yml`
+- **Database**: Enable connection pooling, indexing on frequently queried columns
+- **Blob Storage**: Implement tiered storage for archived results
+- **OpenAI API**: Use model caching, request batching
 
 ---
 
-## ⚙️ Configuration
+## Contributing & Development
 
-### Environment Variables
+### Code Standards
 
-Create a `.env` file in the project root:
-
-```env
-# ====== API SERVICE ======
-FLASK_ENV=production
-FLASK_APP=main.py
-API_PORT=5000
-API_HOST=0.0.0.0
-
-# ====== DATABASE ======
-AZURE_SQL_SERVER=your-server.database.windows.net
-AZURE_SQL_DATABASE=your-database
-AZURE_SQL_USER=your-username
-AZURE_SQL_PASSWORD=your-password
-DATABASE_URL=mssql+pyodbc://user:password@server/database?driver=ODBC+Driver+17+for+SQL+Server
-
-# ====== AZURE STORAGE ======
-AZURE_STORAGE_ACCOUNT_NAME=yourstorageaccount
-AZURE_STORAGE_ACCOUNT_KEY=your-account-key
-AZURE_STORAGE_CONTAINER=processing-files
-
-# ====== AZURE SERVICE BUS ======
-AZURE_SERVICE_BUS_CONNECTION_STRING=Endpoint=sb://...
-AZURE_SERVICE_BUS_QUEUE=ai-processing-queue
-
-# ====== AZURE COGNITIVE SERVICES ======
-AZURE_VISION_ENDPOINT=https://your-region.api.cognitive.microsoft.com/
-AZURE_VISION_KEY=your-vision-key
-AZURE_SPEECH_KEY=your-speech-key
-AZURE_SPEECH_REGION=your-region
-
-# ====== OPENAI ======
-OPENAI_API_KEY=sk-...
-OPENAI_MODEL=gpt-4
-
-# ====== LOGGING ======
-LOG_LEVEL=INFO
-LOG_FORMAT=json
-
-# ====== WORKER SERVICE ======
-WORKER_TIMEOUT=300
-MAX_RETRIES=3
-RETRY_BACKOFF_MULTIPLIER=2
-```
-
-### Docker Compose Customization
-
-Edit `docker-compose.yml` to adjust:
-
-- Port mappings
-- Environment variables per service
-- Volume mounts
-- Network configuration
-- Resource limits
-
----
-
-## 👨‍💻 Development
-
-### Local Setup (Without Docker)
-
-```bash
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate
-
-# Install API service dependencies
-cd api_service
-pip install -r requirements.txt
-cd ..
-
-# Install worker service dependencies
-cd worker_service
-pip install -r requirements.txt
-cd ..
-
-# Run API service
-python api_service/main.py
-
-# Run worker service (in another terminal)
-python worker_service/main.py
-```
-
-### Running Tests
-
-```bash
-# Run unit tests
-pytest tests/ -v
-
-# Run with coverage
-pytest tests/ --cov=. --cov-report=html
-
-# Integration tests
-pytest tests/integration/ -v -m integration
-```
-
-### Code Quality
-
-```bash
-# Format code
-black api_service/ worker_service/
-
-# Lint code
-flake8 api_service/ worker_service/
-
-# Type checking
-mypy api_service/ worker_service/
-```
-
-### Database Migrations
-
-```bash
-# Create new migration
-alembic revision --autogenerate -m "Add new column"
-
-# Apply migrations
-alembic upgrade head
-
-# Rollback migration
-alembic downgrade -1
-```
-
----
-
-## 🤝 Contributing
-
-We welcome contributions from the community! Here's how to get started:
+- **Python**: PEP 8 compliance, type hints
+- **Documentation**: Docstrings for all public functions/classes
+- **Testing**: Minimum 80% code coverage
+- **Security**: No hardcoded secrets, input validation required
 
 ### Development Workflow
 
-1. **Fork the repository**
-   ```bash
-   git clone https://github.com/your-username/Enterprise-Azure-Native-AI-Processing-Platform.git
-   ```
+```bash
+# Create feature branch
+git checkout -b feature/new-feature
 
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
+# Make changes and test locally
+docker-compose up -d
+pytest tests/
 
-3. **Make your changes**
-   - Follow PEP 8 style guidelines
-   - Add unit tests for new functionality
-   - Update documentation as needed
+# Commit with conventional commits
+git commit -m "feat: add new feature"
 
-4. **Commit your changes**
-   ```bash
-   git commit -m "Add amazing feature"
-   ```
+# Push and create pull request
+git push origin feature/new-feature
+```
 
-5. **Push to your fork**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
+### Testing
 
-6. **Create a Pull Request**
-   - Provide clear description of changes
-   - Link related issues
-   - Ensure all tests pass
+```bash
+# Run unit tests
+pytest tests/unit/
 
-### Contribution Guidelines
+# Run integration tests (requires Docker)
+pytest tests/integration/
 
-- **Code Style**: Follow PEP 8
-- **Testing**: Maintain >80% code coverage
-- **Documentation**: Update README and inline comments
-- **Commits**: Use clear, descriptive commit messages
-- **Issues**: Check existing issues before creating new ones
-
-### Reporting Issues
-
-- Use GitHub Issues for bug reports
-- Include steps to reproduce
-- Provide error logs and screenshots
-- Specify your environment details
+# Run with coverage
+pytest --cov=app tests/
+```
 
 ---
 
-## 📋 License
+## Troubleshooting
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+### Worker Service Not Processing Jobs
 
-MIT © 2024 Enterprise AI Platform Contributors
+```bash
+# Check Service Bus connection
+docker-compose exec worker_service python -c "from azure_clients.service_bus_client import ServiceBusClient; ServiceBusClient().check_connection()"
 
----
+# Check queue messages
+az servicebus queue peek --resource-group enterprise-ai-rg \
+  --namespace-name your-namespace \
+  --name document-processing-queue
+```
 
-## 📞 Support & Community
+### Blob Storage Upload Failures
 
-### Get Help
+```bash
+# Verify storage account connectivity
+docker-compose exec api_service python -c "from azure_clients.blob_client import BlobClient; BlobClient().list_containers()"
 
-- 📖 **Documentation**: See our [wiki](https://github.com/Hmzask/Enterprise-Azure-Native-AI-Processing-Platform/wiki)
-- 💬 **Discussions**: Join our [community discussions](https://github.com/Hmzask/Enterprise-Azure-Native-AI-Processing-Platform/discussions)
-- 🐛 **Issue Tracker**: Report bugs on [GitHub Issues](https://github.com/Hmzask/Enterprise-Azure-Native-AI-Processing-Platform/issues)
-- 📧 **Email**: enterprise-ai@example.com
+# Check Key Vault access
+docker-compose exec api_service python -c "from azure_clients.keyvault_client import KeyVaultClient; KeyVaultClient().get_secret('blob-connection-string')"
+```
 
-### Related Resources
+### Job Stuck in PROCESSING State
 
-- [Azure Services Documentation](https://docs.microsoft.com/azure/)
-- [Flask Documentation](https://flask.palletsprojects.com/)
-- [OpenAI API Reference](https://platform.openai.com/docs/)
-- [Docker Documentation](https://docs.docker.com/)
+```bash
+# Check worker logs
+docker-compose logs worker_service | tail -100
 
----
-
-## 🔐 Security
-
-### Reporting Security Vulnerabilities
-
-**Do not** open public issues for security vulnerabilities. Instead, please email `security@example.com` with:
-- Description of the vulnerability
-- Steps to reproduce
-- Potential impact
-- Suggested fix (if any)
-
-### Security Best Practices
-
-- ✅ Never commit secrets or API keys to the repository
-- ✅ Use Azure Key Vault for credential management
-- ✅ Rotate API keys regularly
-- ✅ Enable Azure Defender for additional protection
-- ✅ Use managed identities for Azure service authentication
+# Manually requeue job
+docker-compose exec api_service python -c "from workers.models import Job; Job.objects.filter(job_id='xxx').update(status='PENDING')"
+```
 
 ---
 
-## 🎯 Roadmap
+## Security Considerations & Best Practices
 
-### Version 2.0 (Q2 2024)
-- [ ] Multi-language support for OCR
-- [ ] Advanced document layout analysis
-- [ ] Real-time processing dashboard
-- [ ] Batch processing API improvements
+### DO's ✅
 
-### Version 3.0 (Q4 2024)
-- [ ] Custom model fine-tuning
-- [ ] Advanced document classification
-- [ ] Multi-tenant support
-- [ ] GraphQL API support
+- ✅ Store all secrets in Azure Key Vault
+- ✅ Use Managed Identity for Azure service authentication
+- ✅ Enable MFA for all user accounts in Entra ID
+- ✅ Review audit logs regularly for suspicious activity
+- ✅ Keep Azure SDKs and dependencies updated
+- ✅ Use HTTPS for all external communications
+- ✅ Implement rate limiting on public APIs
+- ✅ Encrypt sensitive data in transit and at rest
+- ✅ Follow principle of least privilege for IAM roles
 
-### Future Considerations
-- Support for additional file formats (DOCX, XLSX, PPTX)
-- On-premises deployment options
-- Advanced workflow automation
-- Mobile applications
+### DON'Ts ❌
 
----
-
-## 📊 Project Statistics
-
-![GitHub stars](https://img.shields.io/github/stars/Hmzask/Enterprise-Azure-Native-AI-Processing-Platform?style=flat-square)
-![GitHub forks](https://img.shields.io/github/forks/Hmzask/Enterprise-Azure-Native-AI-Processing-Platform?style=flat-square)
-![GitHub issues](https://img.shields.io/github/issues/Hmzask/Enterprise-Azure-Native-AI-Processing-Platform?style=flat-square)
+- ❌ Never commit `.env` files or secrets to Git
+- ❌ Never use shared credentials across environments
+- ❌ Never disable authentication for testing (even temporarily)
+- ❌ Never log user PII or sensitive document content
+- ❌ Never use development credentials in production
+- ❌ Never expose detailed error messages to users
+- ❌ Never process unvalidated file uploads directly
+- ❌ Never store files indefinitely without retention policy
 
 ---
 
-<div align="center">
+## License
 
-**[⬆ back to top](#enterprise-azure-native-ai-processing-platform)**
+This project is proprietary and confidential. All rights reserved.
 
-Built with ❤️ for the Enterprise AI Community
+For inquiries, contact: [Your Organization Security Team]
 
-</div>
+---
+
+## Support & Contact
+
+**Documentation**: See `/docs` folder for detailed architecture and API specifications
+
+**Issues & Bug Reports**: Submit via internal issue tracking system
+
+**Security Concerns**: Report to: security@yourorganization.com
+
+**Azure Support**: Azure Support Portal (your subscription)
+
+---
+
+**Last Updated**: January 2024
+
+**Version**: 1.0.0
+
+**Status**: Production Ready ✅
