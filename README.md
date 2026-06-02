@@ -213,6 +213,79 @@ Azure Vision        Azure Speech         Azure OpenAI
 
 ---
 
+## Project Structure
+
+```
+ENTERPRISE-AI-PLATFORM/
+│
+├── README.md                          # Project documentation (this file)
+├── docker-compose.yml                 # Microservices orchestration
+├── .gitignore                         # Git ignore rules
+│
+├── frontend/                          # Web application (Port 3000)
+│   ├── app.py                         # Flask application entry point
+│   ├── requirements.txt               # Python dependencies
+│   ├── Dockerfile                     # Container configuration
+│   ├── templates/                     # HTML templates
+│   │   ├── base.html                  # Base template with navigation
+│   │   ├── login.html                 # Entra ID login page
+│   │   ├── dashboard.html             # Main dashboard with job overview
+│   │   ├── upload.html                # File upload interface
+│   │   ├── jobs.html                  # Job status tracking
+│   │   ├── results.html               # Processed results display
+│   │   ├── admin.html                 # Admin panel for system management
+│   │   └── audit_logs.html            # Audit log viewer for compliance
+│   └── static/                        # CSS, JavaScript, images
+│
+├── api_service/                       # REST API Backend (Port 5000)
+│   ├── app.py                         # API entry point
+│   ├── requirements.txt               # Dependencies
+│   ├── Dockerfile                     # Container configuration
+│   ├── routes/                        # API route definitions
+│   │   ├── auth.py                    # Authentication endpoints
+│   │   ├── jobs.py                    # Job submission endpoints
+│   │   └── results.py                 # Results retrieval endpoints
+│   └── middleware/                    # Authentication & validation
+│
+├── worker_service/                    # Async Job Processing Service
+│   ├── requirements.txt               # Python dependencies (Azure SDKs)
+│   ├── Dockerfile                     # Container configuration
+│   │
+│   ├── workers/
+│   │   ├── queue_listener.py          # Main entry point - listens to Service Bus
+│   │   ├── models.py                  # Job database model
+│   │   └── job_processor.py           # Job processing coordination
+│   │
+│   ├── ai/
+│   │   ├── ai_orchestrator.py         # Routes jobs to appropriate AI service
+│   │   ├── pdf_extractor.py           # PDF text extraction
+│   │   ├── image_processor.py         # Image OCR and analysis
+│   │   └── audio_processor.py         # Audio transcription
+│   │
+│   ├── azure_clients/
+│   │   ├── blob_client.py             # Azure Blob Storage integration
+│   │   ├── service_bus_client.py      # Azure Service Bus queue operations
+│   │   ├── sql_client.py              # Azure SQL Database connection
+│   │   ├── keyvault_client.py         # Azure Key Vault secret retrieval
+│   │   ├── vision_client.py           # Azure Computer Vision (OCR)
+│   │   ├── speech_client.py           # Azure Speech Services
+│   │   └── foundry_client.py          # Azure OpenAI Foundry (Summarization)
+│   │
+│   └── config/
+│       ├── settings.py                # Configuration management
+│       └── logging.py                 # Logging setup
+│
+├── nginx/                             # Reverse Proxy (Port 8080)
+│   ├── Dockerfile                     # Container configuration
+│   └── nginx.conf                     # Route configuration
+│
+├── migrations/                        # Database migrations
+│   └── *.sql                          # Schema setup scripts
+│
+└── temp_processing/                   # Temporary file storage (local)
+    └── (Runtime storage for processing)
+```
+
 # ☁️ Azure Services Architecture
 
 ## 🔐 Azure Entra ID
