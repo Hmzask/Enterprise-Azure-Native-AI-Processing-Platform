@@ -36,6 +36,90 @@ Organizations today struggle with information overload—mountains of documents,
 
 ---
 
+# 📌 Project Overview
+
+The **Enterprise Azure Native AI Processing Platform** is a sophisticated, cloud-native, microservices-based solution engineered for enterprise organizations to intelligently process, analyze, summarize, and manage diverse document types including:
+
+* 📄 PDFs
+* 🖼️ Images
+* 🎙️ Audio Files
+
+Built entirely on the **Microsoft Azure ecosystem**, the platform integrates:
+
+* 🔐 Azure Entra ID
+* 🧠 Azure OpenAI
+* 👁️ Azure Cognitive Services
+* ☁️ Azure Blob Storage
+* 📨 Azure Service Bus
+* 🗄️ Azure SQL Database
+
+to deliver secure, scalable, AI-driven document intelligence at enterprise scale.
+
+---
+
+# 🎯 Project Purpose
+
+Modern enterprises struggle with massive volumes of unstructured information.
+This platform automates the extraction of insights from documents, images, and audio files using advanced AI services.
+
+## ✨ Core Objectives
+
+### 📂 Intelligent Multi-format Processing
+
+Automatically detect and process:
+
+* PDFs
+* Images
+* Audio content
+
+### 🧠 AI-Powered Intelligence Extraction
+
+Leverage Azure AI services for:
+
+* OCR
+* Speech-to-text
+* Text extraction
+* Semantic analysis
+
+### 📝 Executive-Level Summarization
+
+Generate concise AI-powered summaries using Azure OpenAI.
+
+### 🔐 Enterprise Security
+
+Built with:
+
+* Azure Entra ID (SSO & RBAC)
+* Azure Key Vault
+* Azure SQL Audit Logging
+
+### ⚡ Asynchronous Scalability
+
+Queue-driven architecture using Azure Service Bus for non-blocking processing.
+
+### 📋 Compliance & Auditability
+
+Track:
+
+* User actions
+* Document access
+* Processing events
+* Administrative activities
+
+---
+
+# 💼 Key Enterprise Use Cases
+
+| Use Case                   | Description                                                |
+| -------------------------- | ---------------------------------------------------------- |
+| 📑 Document Processing     | Automate processing of invoices, contracts, forms, reports |
+| 🧠 Knowledge Management    | Extract organizational insights from archives              |
+| 🛡️ Compliance & Audit     | Maintain immutable audit trails                            |
+| 📊 Executive Reporting     | Generate AI-powered summaries                              |
+| 🎧 Multimedia Intelligence | Unified processing for documents, images, and audio        |
+
+---
+
 ## Technology Stack
 
 ### Cloud Platform & Identity
